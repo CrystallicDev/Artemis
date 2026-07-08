@@ -34,6 +34,12 @@ Here is a list of currently supported modules :
 - NameTag -> Supports custom NameTag options. [NameTag Module](https://lunarclient.dev/apollo/developers/modules/nametag)
 - Vignette -> Supports custom Vignettes. [Vignette Module](https://lunarclient.dev/apollo/developers/modules/vignette)
 
+## Important Note
+
+> While Artemis is not a cheat of any kind, it acts like a Lunar Client instance to the server. Some aggressive Anti-Cheats may flag Artemis as a Spoofed client, and treat it as such. Use at your own risks.
+
+> For Anti-Cheat developpers, Artemis has a specific channel when connecting to a server to identify.
+
 ## QOL / Fixes
 
 Artemis fixes the "Fast Render" bug that makes the screen black when the Fast Render option is enabled in Optifine.
