@@ -1,6 +1,6 @@
 <div align="center">
 
-![logo](https://imgur.com/SVAOPeb)
+![logo](https://ibb.co/zWJ0kzBp)
 
 # Artemis
 
