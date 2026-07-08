@@ -1,5 +1,7 @@
 <div align="center">
 
+![logo](https://imgur.com/SVAOPeb)
+
 # Artemis
 
 [![Forge](https://img.shields.io/badge/Loader-Forge-darkgreen)](https://minecraftforge.net/)
