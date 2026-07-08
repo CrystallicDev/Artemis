@@ -58,7 +58,7 @@ These features are driven entirely by what the server sends: Artemis only needs 
 ## Availability 
 |Loader|Version|
 |--------|--------|
-| Forge | 1.8.91 |
+| Forge | 1.8.9 |
 
 ## Usage 
 Feel free to integrate Artemis in any of your modpacks, or create new versions of this mod. However, any redistributed version, modified or not, must stay fully free, and keep a link to the original.
