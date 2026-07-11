@@ -1,0 +1,9 @@
+artemis.config.title=Move the cooldown HUD
+artemis.config.hint=Drag the preview with your mouse
+artemis.config.done=Done
+artemis.config.reset=Reset
+artemis.config.direction=Direction: %s
+artemis.direction.right=Right
+artemis.direction.left=Left
+artemis.direction.down=Down
+artemis.direction.up=Up

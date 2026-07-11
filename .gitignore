@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+out/
+bin/
+
+# ForgeGradle dev workspace
+run/
+eclipse/
+.settings/
+.classpath
+.project
+*.launch
+
+# IDEA
+.idea/
+*.iml
+
+# OS
+*.log
+
+# Internal
+CLAUDE.md

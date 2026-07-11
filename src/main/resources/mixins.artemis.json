@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "fr.natsu.artemis.mixins",
+  "refmap": "refmap.artemis.json",
+  "compatibilityLevel": "JAVA_8",
+  "minVersion": "0.7.11",
+  "client": [
+    "MixinNetworkManager",
+    "MixinRenderGlobal",
+    "MixinRendererLivingEntity",
+    "MixinEntityPlayerTeam",
+    "MixinRenderItem",
+    "MixinRenderFire",
+    "MixinModelPlayer",
+    "MixinLayerArmor",
+    "MixinGuiContainer",
+    "MixinGuiScreen",
+    "MixinFontRenderer",
+    "MixinS3EPacketTeams"
+  ],
+  "mixins": []
+}

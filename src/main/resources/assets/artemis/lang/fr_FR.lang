@@ -1,0 +1,9 @@
+artemis.config.title=Déplacer le HUD des cooldowns
+artemis.config.hint=Glissez l'aperçu à la souris
+artemis.config.done=Terminé
+artemis.config.reset=Réinitialiser
+artemis.config.direction=Direction : %s
+artemis.direction.right=Droite
+artemis.direction.left=Gauche
+artemis.direction.down=Bas
+artemis.direction.up=Haut
