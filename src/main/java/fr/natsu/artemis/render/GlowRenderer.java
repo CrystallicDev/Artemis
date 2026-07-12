@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL20;
 
 import fr.natsu.artemis.Artemis;
 import fr.natsu.artemis.ArtemisSettings;
+import fr.natsu.artemis.compat.OptiFineCompat;
 import fr.natsu.artemis.module.glow.GlowState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -85,6 +86,11 @@ public final class GlowRenderer {
         if (mc.theWorld == null || GlowState.isEmpty()) {
             return;
         }
+        // Fast Render (OptiFine) casse notre passe FBO + shader (écran noir) : on ne rend pas le
+        // Glowing tant qu'il est actif. Testé à chaque frame -> se réactive dès que l'option est coupée.
+        if (OptiFineCompat.isFastRender()) {
+            return;
+        }
 
         ensureInitialised();
         if (!isReady()) {
@@ -130,8 +136,14 @@ public final class GlowRenderer {
         if (!(entity instanceof EntityPlayer)) {
             return false;
         }
-        if (entity == renderViewEntity && !ArtemisSettings.renderSelf) {
-            return false;
+        if (entity == renderViewEntity) {
+            // Self-glow : seulement si activé ET en 3e personne. En 1ère personne le modèle joueur n'est
+            // pas visible, mais sa silhouette rendue dans le FBO couvre les bords de l'écran -> le shader
+            // d'outline (Sobel) détecte une arête sur le bord du framebuffer = fines bandes colorées sur
+            // le pourtour de l'écran.
+            if (!ArtemisSettings.renderSelf || Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
+                return false;
+            }
         }
         EntityPlayer player = (EntityPlayer) entity;
         if (player.isSpectator() || player.isInvisible()) {
@@ -145,7 +157,7 @@ public final class GlowRenderer {
     // ------------------------------------------------------------------
 
     public static void displayFramebuffer() {
-        if (!foundOneToRender || !isReady()) {
+        if (!foundOneToRender || !isReady() || OptiFineCompat.isFastRender()) {
             foundOneToRender = false;
             return;
         }
