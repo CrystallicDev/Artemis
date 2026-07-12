@@ -73,7 +73,8 @@ public final class LightningRenderer {
         // Remet le func par défaut AVANT de couper le blend (voir Javadoc).
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
+        // On ne ré-active PAS le lighting (désactivé au RenderWorldLastEvent) : le laisser actif noircit
+        // le rendu 2D suivant (glint d'enchantement noir, texte du HUD grisé).
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }

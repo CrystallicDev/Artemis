@@ -137,11 +137,12 @@ public final class WaypointRenderer {
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.enableCull();
-        GlStateManager.enableLighting();
-        // On a posé un blend func ADDITIF (SRC_ALPHA, ONE) : le remettre au défaut avant de couper le
-        // blend, sinon le func additif reste dans le cache GlStateManager et le prochain rendu de texte
-        // (FontRenderer ne fixe pas son propre func) se dessine en additif -> HUD délavé. Invisible hors
-        // spectateur car la hotbar réinitialise le func ; en spectateur elle est zappée -> HUD grisé.
+        // NE PAS ré-activer le lighting : il est déjà désactivé au RenderWorldLastEvent. Le rallumer le
+        // laisse actif jusqu'au rendu 2D (HUD/inventaire) -> texte grisé et glint d'enchantement noir.
+        // Ce bug n'apparaissait que waypoint hors écran : sinon la passe overlay des labels laissait le
+        // lighting désactivé et masquait la fuite.
+        // Blend func ADDITIF (SRC_ALPHA, ONE) posé plus haut : le remettre au défaut avant de couper le
+        // blend, sinon il resterait dans le cache GlStateManager et délaverait le texte du HUD.
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
@@ -185,7 +186,8 @@ public final class WaypointRenderer {
 
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
-        GlStateManager.enableLighting();
+        // On ne ré-active PAS le lighting (désactivé au RenderWorldLastEvent) : le laisser actif noircit
+        // le rendu 2D suivant (glint d'enchantement noir, texte du HUD grisé).
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
         GL11.glLineWidth(1.0F); // ne pas laisser fuiter l'épaisseur de trait vers d'autres rendus (F3...)
