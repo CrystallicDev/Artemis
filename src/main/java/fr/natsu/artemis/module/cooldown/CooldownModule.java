@@ -12,11 +12,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
- * Module Cooldown : traduit {@code lunarclient.apollo.cooldown.v1.*} en entrées de
- * {@link CooldownState}. Rendu HUD assuré par {@code CooldownRenderer}.
+ * Cooldown module: turns {@code lunarclient.apollo.cooldown.v1.*} into {@link CooldownState} entries.
+ * The HUD rendering is done by {@code CooldownRenderer}.
  *
- * <p>{@code DisplayCooldownMessage} : name(#1 string), duration(#2 Duration), icon(#3 Icon oneof),
- * style(#4 CooldownStyle = 4 couleurs). On gère l'icône de type ItemStack (item_id/item_name).</p>
+ * <p>{@code DisplayCooldownMessage}: name(#1 string), duration(#2 Duration), icon(#3 Icon oneof),
+ * style(#4 CooldownStyle = 4 colors). We handle the ItemStack icon variant (item_id/item_name).</p>
  */
 public final class CooldownModule {
 
@@ -24,7 +24,7 @@ public final class CooldownModule {
     private static final String REMOVE = "lunarclient.apollo.cooldown.v1.RemoveCooldownMessage";
     private static final String RESET_ALL = "lunarclient.apollo.cooldown.v1.ResetCooldownsMessage";
 
-    // Couleurs ARGB par défaut (reprises de Lunar) si le style n'en fournit pas.
+    // Default ARGB colors (taken from Lunar) used when the style doesn't provide them.
     private static final int DEFAULT_CIRCLE_START = 0x99595959;
     private static final int DEFAULT_CIRCLE_END = 0xFFE5E5E5;
     private static final int DEFAULT_EDGE = 0xFF000000;
@@ -80,7 +80,7 @@ public final class CooldownModule {
 
         CooldownState.display(name, durationMillis, icon, circleStart, circleEnd, circleEdge, textColor);
         Artemis.LOGGER.info("[Cooldown] display '{}' {}ms icon={}", name, durationMillis,
-            icon == null ? "aucune" : icon.getItem());
+            icon == null ? "none" : icon.getItem());
     }
 
     private static void onRemove(Any message) throws Exception {
@@ -102,10 +102,10 @@ public final class CooldownModule {
 
     private static void onResetAll(Any message) {
         CooldownState.resetAll();
-        Artemis.LOGGER.info("[Cooldown] reset complet");
+        Artemis.LOGGER.info("[Cooldown] reset all");
     }
 
-    /** Parse un {@code Icon} : seul le variant ItemStack (#1) est géré. */
+    /** Parses an {@code Icon}: only the ItemStack variant (#1) is handled. */
     private static ItemStack parseIcon(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         ItemStack icon = null;
@@ -114,14 +114,14 @@ public final class CooldownModule {
             if (WireFormat.getTagFieldNumber(tag) == 1) {
                 icon = parseItemStackIcon(in.readBytes());
             } else {
-                // Variants resource-location non gérés pour l'instant.
+                // Resource-location variants aren't handled yet.
                 in.skipField(tag);
             }
         }
         return icon;
     }
 
-    /** Parse un {@code ItemStackIcon} : item_id(#1 int32) OU item_name(#2 string). */
+    /** Parses an {@code ItemStackIcon}: item_id(#1 int32) OR item_name(#2 string). */
     private static ItemStack parseItemStackIcon(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         int itemId = -1;
@@ -149,7 +149,7 @@ public final class CooldownModule {
         return item == null ? null : new ItemStack(item);
     }
 
-    /** Parse un {@code CooldownStyle} : circle start/end/edge + text color (tous {@code Color} ARGB). */
+    /** Parses a {@code CooldownStyle}: circle start/end/edge + text color (all {@code Color} ARGB). */
     private static int[] parseStyle(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         int[] colors = {DEFAULT_CIRCLE_START, DEFAULT_CIRCLE_END, DEFAULT_EDGE, DEFAULT_TEXT};

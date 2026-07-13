@@ -31,16 +31,15 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
- * Point d'entrée d'Artemis.
+ * Artemis entry point.
  *
- * <p>Artemis est un mod Forge 1.8.9 <b>client uniquement</b> qui fait office de pont de
- * compatibilité entre Apollo (l'API serveur de Lunar Client) et Forge : lorsqu'un serveur
- * utilisant Apollo demande au client d'activer un effet (Glowing, TeamView, Cooldown,
- * Vignette, ...), Artemis traite la demande comme le ferait un vrai client Lunar.</p>
+ * <p>Artemis is a <b>client-only</b> Forge 1.8.9 mod that bridges Apollo (Lunar Client's server API)
+ * and Forge: when an Apollo server asks the client to enable an effect (Glowing, TeamView, Cooldown,
+ * Vignette, ...), Artemis handles it the way a real Lunar client would.</p>
  *
- * <p>Le protocole Apollo transite sur le canal plugin-message {@code lunar:apollo} sous la
- * forme de messages protobuf {@code google.protobuf.Any}. La couche réseau qui enregistre ce
- * canal, parse les messages et les distribue aux modules sera branchée ici (étape 2).</p>
+ * <p>The Apollo protocol travels over the {@code lunar:apollo} plugin-message channel as
+ * {@code google.protobuf.Any} messages. The network layer registers that channel, parses the messages
+ * and dispatches them to the modules.</p>
  */
 @Mod(
     modid = Artemis.MOD_ID,
@@ -60,72 +59,71 @@ public final class Artemis {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ArtemisConfig.init(event.getModConfigurationDirectory());
-        LOGGER.info("[Artemis] preInit - pont Forge -> Apollo (Lunar Client) pour 1.8.9");
+        LOGGER.info("[Artemis] preInit - Forge -> Apollo (Lunar Client) bridge for 1.8.9");
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        // Couche réseau Apollo : enregistrement du canal `lunar:apollo` au login,
-        // parsing des `Any` entrants et dispatch vers les modules.
+        // Apollo network layer: registers `lunar:apollo` at login, parses the incoming `Any` messages
+        // and dispatches them to the modules.
         ApolloNetwork network = ApolloNetwork.getInstance();
         MinecraftForge.EVENT_BUS.register(network);
 
-        // Module Glowing : handlers réseau + rendu de l'outline.
+        // Glowing: network handlers + outline rendering.
         GlowModule.register(network);
         MinecraftForge.EVENT_BUS.register(new GlowOverlayListener());
 
-        // Module Nametag : handlers réseau + rendu au-dessus des joueurs.
+        // Nametag: network handlers + rendering above players.
         NametagModule.register(network);
         MinecraftForge.EVENT_BUS.register(new NametagRenderer());
 
-        // Module Cooldown : handlers réseau + rendu HUD.
+        // Cooldown: network handlers + HUD rendering.
         CooldownModule.register(network);
         MinecraftForge.EVENT_BUS.register(new CooldownRenderer());
 
-        // Module Vignette : handlers réseau + overlay plein écran.
+        // Vignette: network handlers + full-screen overlay.
         VignetteModule.register(network);
         MinecraftForge.EVENT_BUS.register(new VignetteRenderer());
 
-        // Module TeamView : handlers réseau + marqueurs world-space.
+        // TeamView: network handlers + world-space markers.
         TeamModule.register(network);
         MinecraftForge.EVENT_BUS.register(new TeamRenderer());
 
-        // Module Waypoint : handlers réseau + beam/label world-space.
+        // Waypoint: network handlers + world-space beam/label.
         WaypointModule.register(network);
         MinecraftForge.EVENT_BUS.register(new WaypointRenderer());
 
-        // Module Marker : handlers réseau + icône/infos conditionnelles (hover).
+        // Marker: network handlers + conditional icon/info (hover).
         MarkerModule.register(network);
         MinecraftForge.EVENT_BUS.register(new MarkerRenderer());
 
-        // Module Colored Fire : couleur des flammes par joueur (rendu via MixinRenderFire).
+        // Colored Fire: per-player flame color (rendered via MixinRenderFire).
         ColoredFireModule.register(network);
 
-        // Module Limb : masquage de parties du corps par joueur (rendu via MixinModelPlayer).
+        // Limb: per-player body-part hiding (rendered via MixinModelPlayer).
         LimbModule.register(network);
 
-        // Module Inventory (interaction) : les items tagués lunar.* sont gérés par
-        // MixinGuiContainer / MixinGuiScreen — aucun handler réseau à enregistrer.
+        // Inventory (interaction): items tagged lunar.* are handled by MixinGuiContainer /
+        // MixinGuiScreen, nothing to register here.
 
-        // Chat Custom : réception sur artemis:chat (MixinNetworkManager) -> injection dans le chat
-        // vanilla, rendu hex via MixinGuiNewChat. Aucun listener à enregistrer.
+        // Custom chat: received on artemis:chat (MixinNetworkManager) -> injected into the vanilla
+        // chat, hex-rendered via MixinFontRenderer. Nothing to register here.
 
-        // Éclairs colorés : réception sur artemis:lightning (MixinNetworkManager) -> LightningState,
-        // rendu au RenderWorldLastEvent. Feature hors Apollo (comme le chat).
+        // Colored lightning: received on artemis:lightning (MixinNetworkManager) -> LightningState,
+        // drawn on RenderWorldLastEvent. A non-Apollo feature (like the chat).
         MinecraftForge.EVENT_BUS.register(new LightningRenderer());
 
-        // Commande client /artemis + ouverture différée de l'écran de config (au tick).
+        // Client command /artemis + deferred opening of the config screen (on tick).
         ClientCommandHandler.instance.registerCommand(new ArtemisCommand());
         MinecraftForge.EVENT_BUS.register(new ArtemisGuiController());
 
-        LOGGER.info("[Artemis] init - reseau Apollo + modules Glow/Nametag/Cooldown/Vignette/TeamView/Waypoint/Marker actifs");
+        LOGGER.info("[Artemis] init - Apollo network + Glow/Nametag/Cooldown/Vignette/TeamView/Waypoint/Marker modules active");
 
-        // Le module Glint (rendu par item via NBT lunar.glint) est actif via MixinRenderItem.
-        // Étape suivante : Custom Chat (+ PingMarker si Apollo mis à jour).
+        // The Glint module (per-item render via the lunar.glint NBT) is active through MixinRenderItem.
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        LOGGER.info("[Artemis] postInit - prêt");
+        LOGGER.info("[Artemis] postInit - ready");
     }
 }

@@ -8,20 +8,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.item.ItemStack;
 
 /**
- * Source de vérité du module Marker : les markers actifs, indexés par leur id.
+ * Source of truth for the Marker module: the active markers, keyed by their id.
  *
- * <p>Écrit depuis le thread réseau ({@link MarkerModule}), lu depuis le thread de rendu
+ * <p>Written from the network thread ({@link MarkerModule}), read from the render thread
  * ({@code MarkerRenderer}).</p>
  */
 public final class MarkerState {
 
-    /** Types de marker ({@code MarkerFlag}). */
+    /** Marker types ({@code MarkerFlag}). */
     public static final int TYPE_NORMAL = 1;
     public static final int TYPE_DANGER = 2;
     public static final int TYPE_INFO = 3;
     public static final int TYPE_INTEREST = 4;
 
-    /** Conditions d'affichage ({@code MarkerDisplayCondition}). */
+    /** Display conditions ({@code MarkerDisplayCondition}). */
     public static final int COND_UNSPECIFIED = 0;
     public static final int COND_NEVER = 1;
     public static final int COND_HOVER = 2;
@@ -31,14 +31,14 @@ public final class MarkerState {
     public static final int OWNER_HEAD = 1;
     public static final int OWNER_NAME = 2;
 
-    /** Types de cible ({@code MarkerTarget}). */
+    /** Target types ({@code MarkerTarget}). */
     public static final int TARGET_NONE = 0;
     public static final int TARGET_ITEM = 1;
     public static final int TARGET_BLOCK = 2;
     public static final int TARGET_ENTITY = 3;
     public static final int TARGET_PLAYER = 4;
 
-    /** Ce que le marker désigne (détermine l'icône rendue). */
+    /** What the marker points at (decides which icon is rendered). */
     public static final class Target {
         public final int type;
         public final ItemStack item;
@@ -59,7 +59,7 @@ public final class MarkerState {
         }
     }
 
-    /** Un marker à une position donnée. */
+    /** A marker at a given position. */
     public static final class Marker {
         public final String id;
         public final String ownerName;

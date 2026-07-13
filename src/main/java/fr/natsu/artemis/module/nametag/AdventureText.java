@@ -12,13 +12,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * Parseur minimal de composants texte « adventure » (format JSON de Minecraft 1.7+/1.20+) vers des
- * runs colorés rendables en 1.8.9.
+ * Minimal parser for "adventure" text components (the Minecraft 1.7+/1.20+ JSON format) into colored
+ * runs that can be drawn on 1.8.9.
  *
- * <p>Le FontRenderer 1.8.9 ne comprend pas le hex dans les chaînes, mais accepte une couleur RGB
- * pleine en argument de {@code drawString}. On aplati donc l'arbre JSON en une liste de
- * {@link Run} (texte + couleur RGB + codes de style §), héritant le style du parent vers les
- * enfants.</p>
+ * <p>The 1.8.9 FontRenderer doesn't understand hex inside strings, but it accepts a full RGB color as
+ * an argument to {@code drawString}. So we flatten the JSON tree into a list of {@link Run}s (text +
+ * RGB color + § style codes), inheriting the style from parent to children.</p>
  */
 public final class AdventureText {
 
@@ -46,11 +45,11 @@ public final class AdventureText {
     private AdventureText() {
     }
 
-    /** Un fragment de texte homogène : les octets à dessiner (styles § inclus) et sa couleur RGB. */
+    /** A homogeneous text fragment: the text to draw (§ styles included) and its RGB color. */
     public static final class Run {
-        /** Texte préfixé de ses codes de style (§l, §o, …), prêt pour {@code drawString}. */
+        /** Text prefixed with its style codes (§l, §o, …), ready for {@code drawString}. */
         public final String display;
-        /** Couleur RGB (0xRRGGBB) ; l'alpha est ajouté par le FontRenderer. */
+        /** RGB color (0xRRGGBB); the alpha is added by the FontRenderer. */
         public final int rgb;
 
         Run(String display, int rgb) {
@@ -59,7 +58,7 @@ public final class AdventureText {
         }
     }
 
-    /** Style courant propagé pendant le parcours de l'arbre. */
+    /** Current style propagated while walking the tree. */
     private static final class Style {
         int rgb = 0xFFFFFF;
         boolean bold;
@@ -101,11 +100,11 @@ public final class AdventureText {
     }
 
     /**
-     * Parse un composant JSON en liste de runs. Renvoie une liste avec le texte brut en secours si le
-     * JSON est invalide.
+     * Parses a JSON component into a list of runs. Falls back to a single run with the raw text if the
+     * JSON is invalid.
      *
-     * @param json le composant JSON adventure
-     * @return les runs, jamais {@code null}
+     * @param json the adventure JSON component
+     * @return the runs, never {@code null}
      */
     public static List<Run> parse(String json) {
         List<Run> runs = new ArrayList<>();
@@ -178,7 +177,7 @@ public final class AdventureText {
         }
     }
 
-    /** Résout une couleur adventure (hex {@code #RRGGBB} ou nom) en RGB, ou {@code null} si inconnue. */
+    /** Resolves an adventure color (hex {@code #RRGGBB} or a name) to RGB, or {@code null} if unknown. */
     private static Integer resolveColor(String value) {
         if (value == null || value.isEmpty()) {
             return null;

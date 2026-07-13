@@ -15,12 +15,12 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les nametags Apollo au-dessus des joueurs, en remplacement du nametag vanilla (annulation de
- * {@code RenderLivingEvent.Specials.Pre}, qui enveloppe {@code renderName}).
+ * Draws the Apollo nametags above players, replacing the vanilla nametag (by cancelling
+ * {@code RenderLivingEvent.Specials.Pre}, which wraps {@code renderName}).
  *
- * <p>Transform billboard repris de {@code CustomNametagRenderer} d'Eterion. Les lignes (issues de
- * {@link NametagState}) sont empilées au-dessus de la tête, chaque run dessiné avec sa couleur RGB
- * pour un support hex complet.</p>
+ * <p>The billboard transform is taken from Eterion's {@code CustomNametagRenderer}. The lines (from
+ * {@link NametagState}) are stacked above the head, each run drawn with its RGB color for full hex
+ * support.</p>
  */
 public final class NametagRenderer {
 
@@ -47,7 +47,7 @@ public final class NametagRenderer {
             return;
         }
 
-        // On prend la main sur le nametag : pas de rendu vanilla en plus du nôtre.
+        // We take over the nametag: no vanilla render on top of ours.
         event.setCanceled(true);
         render(player, lines, event.x, event.y, event.z);
     }
@@ -81,9 +81,9 @@ public final class NametagRenderer {
                 width += font.getStringWidth(run.display);
             }
 
-            // Espace vanilla : font-y positif descend (dans le skin), négatif monte.
-            // On garde tout à font-y <= 0 : la dernière ligne se pose juste au-dessus de la
-            // tête (font-y = 0) et les précédentes s'empilent vers le haut.
+            // In the vanilla nametag space, a positive font-y goes down (into the skin), negative goes
+            // up. We keep everything at font-y <= 0: the last line sits just above the head (font-y = 0)
+            // and the earlier ones stack upward.
             int lineY = -i * lineHeight;
             int startX = -width / 2;
 
@@ -104,7 +104,7 @@ public final class NametagRenderer {
         GL11.glPopMatrix();
     }
 
-    /** Fond semi-transparent façon nametag vanilla (noir 25%). */
+    /** Semi-transparent background like the vanilla nametag (25% black). */
     private static void drawBackground(int x1, int y1, int x2, int y2) {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.25F);
