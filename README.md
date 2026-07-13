@@ -5,7 +5,7 @@
 # Artemis
 
 [![Forge](https://img.shields.io/badge/Loader-Forge-darkgreen)](https://minecraftforge.net/)
-![Modrinth Downloads](https://img.shields.io/modrinth/dt/lunar-artemis?logo=modrinth&label=Downloads&color=00AF5C)
+![Modrinth Downloads](https://img.shields.io/modrinth/dt/artemis-mod?logo=modrinth&label=Downloads&color=00AF5C)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/nqtsu91)
 
