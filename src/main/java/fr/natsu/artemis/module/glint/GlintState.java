@@ -4,24 +4,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Lecture de la couleur de glint sur un item, selon la convention Lunar Client / Apollo.
+ * Reads an item's glint color, following the Lunar Client / Apollo convention.
  *
- * <p>Le serveur pose sur l'item une NBT {@code lunar.glint} = couleur <b>ARGB</b> (ex. {@code -65536}
- * = {@code 0xFFFF0000}, rouge). Cette NBT voyage avec l'item par les packets Minecraft normaux ; le
- * rendu coloré est appliqué par {@code MixinRenderItem}.</p>
+ * <p>The server puts a {@code lunar.glint} NBT tag on the item, an <b>ARGB</b> color (e.g.
+ * {@code -65536} = {@code 0xFFFF0000}, red). That tag travels with the item through the normal
+ * Minecraft packets; the colored rendering is done by {@code MixinRenderItem}.</p>
  */
 public final class GlintState {
 
-    /** Compound NBT Lunar posé sur l'item. */
+    /** The Lunar NBT compound put on the item. */
     public static final String LUNAR_TAG = "lunar";
 
-    /** Clé de la couleur de glint (int ARGB) dans le compound {@link #LUNAR_TAG}. */
+    /** Key of the glint color (ARGB int) inside the {@link #LUNAR_TAG} compound. */
     public static final String GLINT_KEY = "glint";
 
     private GlintState() {
     }
 
-    /** Vrai si l'item porte une couleur de glint {@code lunar.glint}. */
+    /** True if the item carries a {@code lunar.glint} color. */
     public static boolean hasGlint(ItemStack stack) {
         if (stack == null || !stack.hasTagCompound()) {
             return false;
@@ -30,7 +30,7 @@ public final class GlintState {
         return tag.hasKey(LUNAR_TAG) && tag.getCompoundTag(LUNAR_TAG).hasKey(GLINT_KEY);
     }
 
-    /** Couleur ARGB du glint de l'item (appeler après {@link #hasGlint}). */
+    /** The item's glint color as ARGB (call after {@link #hasGlint}). */
     public static int glintArgb(ItemStack stack) {
         return stack.getTagCompound().getCompoundTag(LUNAR_TAG).getInteger(GLINT_KEY);
     }

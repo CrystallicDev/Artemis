@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 
 /**
- * Module Inventory (interaction) : cache le tooltip des items tagués {@code lunar.hideItemTooltip}.
+ * Inventory (interaction) module: hides the tooltip of items tagged {@code lunar.hideItemTooltip}.
  */
 @Mixin(GuiScreen.class)
 public class MixinGuiScreen {

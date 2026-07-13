@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Génère une version « alpha » de la texture de glint vanilla, façon Lunar : chaque pixel devient
- * blanc (RGB = 0xFFFFFF) avec l'alpha égal au niveau de gris d'origine.
+ * Builds an "alpha" version of the vanilla glint texture, Lunar-style: every pixel becomes white
+ * (RGB = 0xFFFFFF) with its alpha set to the original grey level.
  *
- * <p>Rendue ensuite teintée par une couleur de vertex, cette texture permet d'obtenir un glint de
- * <b>n'importe quelle couleur</b> — indépendamment du chemin de rendu vanilla/OptiFine.</p>
+ * <p>Drawn tinted by a vertex color, this texture lets us get a glint of <b>any color</b>, independent
+ * of the vanilla/OptiFine glint path.</p>
  */
 public final class GlintTexture {
 
@@ -25,7 +25,7 @@ public final class GlintTexture {
     private GlintTexture() {
     }
 
-    /** Emplacement de la texture alpha (générée à la première demande, avec un contexte GL valide). */
+    /** The alpha texture location (built on first use, with a valid GL context). */
     public static ResourceLocation get() {
         if (location == null) {
             build();
@@ -51,9 +51,9 @@ public final class GlintTexture {
             }
 
             location = mc.getTextureManager().getDynamicTextureLocation("artemis_glint", new DynamicTexture(out));
-            Artemis.LOGGER.info("[Glint] texture alpha generee ({}x{})", width, height);
+            Artemis.LOGGER.info("[Glint] alpha texture generated ({}x{})", width, height);
         } catch (Exception e) {
-            Artemis.LOGGER.error("[Glint] echec de generation de la texture alpha, fallback vanilla", e);
+            Artemis.LOGGER.error("[Glint] failed to generate the alpha texture, falling back to vanilla", e);
             location = VANILLA_GLINT;
         }
     }

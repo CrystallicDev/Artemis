@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 
 /**
- * Branche la passe 1 du Glowing dans {@code RenderGlobal.renderEntities}, au moment où la caméra et
- * les positions interpolées sont disponibles. Point d'injection identique à celui d'Eterion.
+ * Hooks the Glowing pass 1 into {@code RenderGlobal.renderEntities}, right when the camera and the
+ * interpolated positions are available. Same injection point Eterion uses.
  */
 @Mixin(RenderGlobal.class)
 public abstract class MixinRenderGlobal {

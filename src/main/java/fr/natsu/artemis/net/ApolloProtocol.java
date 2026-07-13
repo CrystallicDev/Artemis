@@ -1,27 +1,27 @@
 package fr.natsu.artemis.net;
 
 /**
- * Constantes du protocole Apollo (Lunar Client).
+ * Apollo (Lunar Client) protocol constants.
  *
- * <p>Apollo communique avec le client sur un canal plugin-message vanilla. Chaque message est un
- * {@code google.protobuf.Any} sérialisé, transporté tel quel dans le payload du packet.</p>
+ * <p>Apollo talks to the client over a vanilla plugin-message channel. Every message is a serialized
+ * {@code google.protobuf.Any}, carried as-is inside the packet payload.</p>
  */
 public final class ApolloProtocol {
 
-    /** Canal plugin-message sur lequel transite tout le trafic Apollo. */
+    /** Plugin-message channel that carries all Apollo traffic. */
     public static final String CHANNEL = "lunar:apollo";
 
     /**
-     * Canal vanilla d'enregistrement des canaux plugin-message. En annonçant {@link #CHANNEL} sur
-     * ce canal au login, le serveur nous détecte comme un client Lunar (PlayerRegisterChannelEvent)
-     * et commence à pousser les packets Apollo.
+     * Vanilla channel used to register plugin-message channels. Announcing {@link #CHANNEL} on this
+     * channel at login makes the server detect us as a Lunar client (PlayerRegisterChannelEvent) and
+     * start pushing Apollo packets.
      */
     public static final String REGISTER_CHANNEL = "REGISTER";
 
     /**
-     * Préfixe des {@code type_url} protobuf. Un {@code Any} expose son type sous la forme
-     * {@code type.googleapis.com/com.lunarclient.apollo.glow.v1.OverrideGlowEffectMessage} ; on ne
-     * conserve que la partie après le dernier {@code '/'} comme clé de dispatch.
+     * Prefix of protobuf {@code type_url}s. An {@code Any} exposes its type as
+     * {@code type.googleapis.com/com.lunarclient.apollo.glow.v1.OverrideGlowEffectMessage}; we only
+     * keep the part after the last {@code '/'} as the dispatch key.
      */
     public static final String TYPE_URL_PREFIX = "type.googleapis.com/";
 
@@ -29,10 +29,10 @@ public final class ApolloProtocol {
     }
 
     /**
-     * Extrait le nom de type protobuf complet d'un {@code type_url}.
+     * Extracts the full protobuf type name from a {@code type_url}.
      *
-     * @param typeUrl le {@code type_url} d'un {@code Any}
-     * @return le nom de message pleinement qualifié (ex. {@code com.lunarclient.apollo.glow.v1.OverrideGlowEffectMessage})
+     * @param typeUrl the {@code type_url} of an {@code Any}
+     * @return the fully-qualified message name (e.g. {@code com.lunarclient.apollo.glow.v1.OverrideGlowEffectMessage})
      */
     public static String messageType(String typeUrl) {
         int slash = typeUrl.lastIndexOf('/');

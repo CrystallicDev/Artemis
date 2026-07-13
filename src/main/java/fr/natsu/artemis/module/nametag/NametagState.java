@@ -6,15 +6,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Source de vérité du module Nametag : les lignes de nametag personnalisées par joueur, déjà
- * parsées en runs colorés (voir {@link AdventureText}).
+ * Source of truth for the Nametag module: the custom nametag lines per player, already parsed into
+ * colored runs (see {@link AdventureText}).
  *
- * <p>Écrit depuis le thread réseau ({@link NametagModule}), lu depuis le thread de rendu
+ * <p>Written from the network thread ({@link NametagModule}), read from the render thread
  * ({@code NametagRenderer}).</p>
  */
 public final class NametagState {
 
-    /** UUID joueur -> liste de lignes ; chaque ligne est une liste de runs. */
+    /** Player UUID -> list of lines; each line is a list of runs. */
     private static final Map<UUID, List<List<AdventureText.Run>>> NAMETAGS = new ConcurrentHashMap<>();
 
     private NametagState() {
@@ -32,7 +32,7 @@ public final class NametagState {
         NAMETAGS.clear();
     }
 
-    /** Lignes de nametag d'un joueur, ou {@code null} s'il n'a pas d'override Apollo. */
+    /** A player's nametag lines, or {@code null} if they have no Apollo override. */
     public static List<List<AdventureText.Run>> get(UUID player) {
         return NAMETAGS.get(player);
     }

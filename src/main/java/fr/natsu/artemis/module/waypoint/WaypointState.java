@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Source de vérité du module Waypoint : les waypoints actifs, indexés par leur nom.
+ * Source of truth for the Waypoint module: the active waypoints, keyed by their name.
  *
- * <p>Écrit depuis le thread réseau ({@link WaypointModule}), lu depuis le thread de rendu
+ * <p>Written from the network thread ({@link WaypointModule}), read from the render thread
  * ({@code WaypointRenderer}).</p>
  */
 public final class WaypointState {
 
-    /** Un waypoint à un bloc donné. */
+    /** A waypoint at a given block. */
     public static final class Waypoint {
         public final String name;
         public final int x;
@@ -60,7 +60,7 @@ public final class WaypointState {
         WAYPOINTS.clear();
     }
 
-    /** Change la visibilité d'un waypoint existant. */
+    /** Toggles the visibility of an existing waypoint. */
     public static void setHidden(String name, boolean hidden) {
         Waypoint waypoint = WAYPOINTS.get(name);
         if (waypoint != null) {

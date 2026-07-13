@@ -5,9 +5,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Source de vérité du module Colored Fire : la couleur RGB des flammes par joueur.
+ * Source of truth for the Colored Fire module: the RGB flame color per player.
  *
- * <p>Écrit depuis le thread réseau ({@link ColoredFireModule}), lu depuis le thread de rendu
+ * <p>Written from the network thread ({@link ColoredFireModule}), read from the render thread
  * ({@code MixinRenderFire}).</p>
  */
 public final class ColoredFireState {
@@ -33,7 +33,7 @@ public final class ColoredFireState {
         return COLORS.isEmpty();
     }
 
-    /** Couleur RGB des flammes du joueur, ou {@code 0} s'il n'a pas de couleur custom. */
+    /** The player's RGB flame color, or {@code 0} if they have no custom color. */
     public static int colorOrZero(UUID player) {
         Integer rgb = COLORS.get(player);
         return rgb == null ? 0 : rgb;

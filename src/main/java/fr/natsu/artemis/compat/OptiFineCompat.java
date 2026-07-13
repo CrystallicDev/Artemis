@@ -6,12 +6,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 
 /**
- * Ponts de compatibilité avec OptiFine, lus par réflexion (les champs n'existent qu'avec OptiFine
- * installé ; en leur absence on renvoie des valeurs neutres).
+ * OptiFine compatibility helpers, read through reflection. The fields only exist when OptiFine is
+ * installed; without it we just return neutral values.
  */
 public final class OptiFineCompat {
 
-    /** Champ {@code GameSettings.ofFastRender} ajouté par OptiFine, ou {@code null} si absent. */
+    /** OptiFine's {@code GameSettings.ofFastRender} field, or {@code null} when it isn't present. */
     private static final Field FAST_RENDER = resolveField("ofFastRender");
 
     private OptiFineCompat() {
@@ -21,14 +21,14 @@ public final class OptiFineCompat {
         try {
             return GameSettings.class.getField(name);
         } catch (NoSuchFieldException e) {
-            return null; // OptiFine absent (ou champ renommé) : traité comme désactivé.
+            return null; // OptiFine isn't installed (or the field was renamed): treat it as off.
         }
     }
 
     /**
-     * Indique si l'option OptiFine <b>Fast Render</b> est active. Elle réécrit le pipeline de rendu
-     * d'une façon incompatible avec notre passe FBO + shader d'outline (écran noir) : on doit donc
-     * désactiver le Glowing tant qu'elle est active. Renvoie {@code false} sans OptiFine.
+     * Whether OptiFine's <b>Fast Render</b> option is enabled. It rewrites the render pipeline in a way
+     * that breaks our FBO + outline shader pass (black screen), so we skip Glowing while it's on.
+     * Returns {@code false} when OptiFine isn't installed.
      */
     public static boolean isFastRender() {
         if (FAST_RENDER == null) {

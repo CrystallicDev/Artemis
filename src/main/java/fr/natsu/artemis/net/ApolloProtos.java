@@ -8,16 +8,16 @@ import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.WireFormat;
 
 /**
- * Lecteurs protobuf manuels pour les types communs Apollo.
+ * Manual protobuf readers for the common Apollo types.
  *
- * <p>Les messages Apollo simples sont décodés à la main via {@link CodedInputStream} plutôt qu'avec
- * les classes générées : zéro dépendance au bootstrap de descripteurs, et tolérance aux champs
- * inconnus (forward-compat) via {@link CodedInputStream#skipField(int)}.</p>
+ * <p>The simple Apollo messages are decoded by hand through {@link CodedInputStream} rather than with
+ * the generated classes: no descriptor-bootstrap dependency, and forward-compat tolerance of unknown
+ * fields through {@link CodedInputStream#skipField(int)}.</p>
  *
- * <p>Encodages (cf. {@code com.lunarclient.apollo.common.v1}) :</p>
+ * <p>Encodings (see {@code com.lunarclient.apollo.common.v1}):</p>
  * <ul>
- *   <li>{@code Uuid} : {@code high64} (#1, fixed64) + {@code low64} (#2, fixed64)</li>
- *   <li>{@code Color} : {@code color} (#1, int32) au format ARGB ({@code java.awt.Color#getRGB()})</li>
+ *   <li>{@code Uuid}: {@code high64} (#1, fixed64) + {@code low64} (#2, fixed64)</li>
+ *   <li>{@code Color}: {@code color} (#1, int32) in ARGB ({@code java.awt.Color#getRGB()})</li>
  * </ul>
  */
 public final class ApolloProtos {
@@ -26,10 +26,10 @@ public final class ApolloProtos {
     }
 
     /**
-     * Décode un message {@code Uuid}.
+     * Decodes a {@code Uuid} message.
      *
-     * @param data le contenu sérialisé du message
-     * @return l'UUID reconstruit
+     * @param data the serialized message content
+     * @return the rebuilt UUID
      */
     public static UUID parseUuid(ByteString data) throws IOException {
         CodedInputStream in = data.newCodedInput();
@@ -52,11 +52,11 @@ public final class ApolloProtos {
     }
 
     /**
-     * Décode un {@code google.protobuf.Duration} ({@code seconds} #1 int64, {@code nanos} #2 int32)
-     * en millisecondes.
+     * Decodes a {@code google.protobuf.Duration} ({@code seconds} #1 int64, {@code nanos} #2 int32)
+     * into milliseconds.
      *
-     * @param data le contenu sérialisé du message
-     * @return la durée en millisecondes
+     * @param data the serialized message content
+     * @return the duration in milliseconds
      */
     public static long parseDurationMillis(ByteString data) throws IOException {
         CodedInputStream in = data.newCodedInput();
@@ -79,10 +79,10 @@ public final class ApolloProtos {
     }
 
     /**
-     * Décode un message {@code Color}.
+     * Decodes a {@code Color} message.
      *
-     * @param data le contenu sérialisé du message
-     * @return la valeur ARGB
+     * @param data the serialized message content
+     * @return the ARGB value
      */
     public static int parseColorArgb(ByteString data) throws IOException {
         CodedInputStream in = data.newCodedInput();

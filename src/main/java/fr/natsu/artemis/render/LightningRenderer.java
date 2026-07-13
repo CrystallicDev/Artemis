@@ -16,16 +16,15 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les éclairs colorés Artemis ({@link LightningState}) au {@code RenderWorldLastEvent}.
+ * Draws the Artemis colored lightning bolts ({@link LightningState}) on {@code RenderWorldLastEvent}.
  *
- * <p>Réplique la géométrie de la foudre vanilla (4 couches × 3 segments × 8 nœuds) mais en
- * {@code POSITION_COLOR} avec deux couleurs : cœur (couches internes, vives) et externe (glow).
- * La graine de l'éclair fige sa forme sur toute sa durée de vie. Adapté du {@code CustomLightningRenderer}
- * d'Eterion.</p>
+ * <p>Replicates vanilla lightning geometry (4 layers × 3 segments × 8 nodes) but in
+ * {@code POSITION_COLOR} with two colors: a core (inner, bright layers) and an outer glow. The bolt's
+ * seed freezes its shape for its whole lifetime. Adapted from Eterion's {@code CustomLightningRenderer}.</p>
  *
- * <p>Le blend est <b>additif</b> pour l'éclat ; on remet le blend func au défaut à la fin, sinon il
- * resterait dans le cache GlStateManager et délaverait le texte du HUD (visible seulement en
- * spectateur, où la hotbar ne réinitialise pas l'état).</p>
+ * <p>Blending is <b>additive</b> for the glow. We reset the blend func to the default afterwards,
+ * otherwise it lingers in the GlStateManager cache and washes out the HUD text (only visible in
+ * spectator, where the hotbar doesn't reset the state).</p>
  */
 public final class LightningRenderer {
 
@@ -57,7 +56,7 @@ public final class LightningRenderer {
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, 1, 0); // additif
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, 1, 0); // additive
 
         for (LightningState.Bolt bolt : bolts) {
             float alpha = bolt.alpha(now);
@@ -70,16 +69,16 @@ public final class LightningRenderer {
             GlStateManager.popMatrix();
         }
 
-        // Remet le func par défaut AVANT de couper le blend (voir Javadoc).
+        // Put the func back to the default BEFORE turning blending off (see the class javadoc).
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.disableBlend();
-        // On ne ré-active PAS le lighting (désactivé au RenderWorldLastEvent) : le laisser actif noircit
-        // le rendu 2D suivant (glint d'enchantement noir, texte du HUD grisé).
+        // Do NOT re-enable lighting (it's off at RenderWorldLastEvent): leaving it on darkens the next
+        // 2D pass (black enchantment glint, greyed-out HUD text).
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    /** Géométrie d'un éclair (reprise du rendu vanilla), bicolore cœur/externe, alpha maître appliqué. */
+    /** Geometry of one bolt (taken from vanilla), two-colored core/outer, master alpha applied. */
     private static void renderBolt(Tessellator tessellator, WorldRenderer worldRenderer,
             LightningState.Bolt bolt, float alpha) {
         double[] baseX = new double[8];
@@ -117,7 +116,7 @@ public final class LightningRenderer {
                         offsetZ += layerRandom.nextInt(31) - 15;
                     }
 
-                    // Couches internes = cœur vif, couches externes = glow.
+                    // Inner layers = bright core, outer layers = glow.
                     float red = layer < 2 ? bolt.coreRed : bolt.mainRed;
                     float green = layer < 2 ? bolt.coreGreen : bolt.mainGreen;
                     float blue = layer < 2 ? bolt.coreBlue : bolt.mainBlue;
@@ -157,6 +156,6 @@ public final class LightningRenderer {
         }
     }
 
-    /** Atténuation d'alpha par couche (cœur brillant -> glow externe diffus). */
+    /** Per-layer alpha falloff (bright core -> diffuse outer glow). */
     private static final float[] LAYER_ALPHA = {0.8F, 0.6F, 0.4F, 0.3F};
 }

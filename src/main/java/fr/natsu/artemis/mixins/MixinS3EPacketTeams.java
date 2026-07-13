@@ -10,21 +10,21 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3EPacketTeams;
 
 /**
- * Retire le plafond de 16 caractères sur les champs du paquet Team côté client.
+ * Removes the 16-character cap on the Team packet fields, client-side.
  *
- * <p>En vanilla, {@link S3EPacketTeams#readPacketData} lit {@code prefix} et {@code suffix} via
- * {@code readStringFromBuffer(16)}, qui <b>lève un {@code DecoderException}</b> (et déconnecte le
- * client) si la chaîne dépasse 16 caractères. Un préfixe hex complet ({@code §x§r§r§g§g§b§b} = 14
- * chars) ne laisse alors que 2 caractères utiles.</p>
+ * <p>In vanilla, {@link S3EPacketTeams#readPacketData} reads {@code prefix} and {@code suffix} with
+ * {@code readStringFromBuffer(16)}, which <b>throws a {@code DecoderException}</b> (and disconnects the
+ * client) if the string is longer than 16 characters. A full hex prefix ({@code §x§r§r§g§g§b§b} = 14
+ * chars) would leave only 2 usable characters.</p>
  *
- * <p>Comme un client Lunar, Artemis relève ce plafond : le serveur (qui sait quels joueurs sont des
- * clients Artemis via l'enregistrement de canal) peut envoyer un paquet Team <b>normal</b> avec un
- * préfixe hex complet uniquement à ces clients, sans changer l'architecture. Le {@code §x} qui en
- * résulte est rendu nativement par {@code MixinFontRenderer} + HexTextRenderer, partout où le nom
- * est affiché (tab, nametag, sidebar...). Les non-Artemis reçoivent le préfixe 16-couleurs habituel.</p>
+ * <p>Like a Lunar client, Artemis lifts that cap: the server (which knows which players are Artemis
+ * clients from the channel registration) can send a <b>normal</b> Team packet with a full hex prefix
+ * to those clients only, without changing anything else. The resulting {@code §x} is rendered natively
+ * by {@code MixinFontRenderer} + HexTextRenderer everywhere the name shows up (tab, nametag,
+ * sidebar...). Non-Artemis players still get the usual 16-color prefix.</p>
  *
- * <p>Le redirect couvre toutes les lectures de {@code readPacketData} (name/displayName/prefix/
- * suffix/visibility/joueurs) : relever leur plafond est sans effet de bord.</p>
+ * <p>The redirect covers every read in {@code readPacketData} (name/displayName/prefix/suffix/
+ * visibility/players); raising their cap has no side effect.</p>
  */
 @Mixin(S3EPacketTeams.class)
 public class MixinS3EPacketTeams {
@@ -35,8 +35,8 @@ public class MixinS3EPacketTeams {
             target = "Lnet/minecraft/network/PacketBuffer;readStringFromBuffer(I)Ljava/lang/String;"),
         require = 0)
     private String artemis$readUncappedString(PacketBuffer buf, int maxLength) throws IOException {
-        // On conserve le plafond d'origine pour les champs déjà larges, on l'élargit seulement pour
-        // les petits (prefix/suffix = 16) afin d'accueillir le hex sans risque de rejet.
+        // Keep the original cap for the already-large fields, only widen the small ones
+        // (prefix/suffix = 16) so they can hold the hex without being rejected.
         return buf.readStringFromBuffer(Math.max(maxLength, Short.MAX_VALUE));
     }
 }

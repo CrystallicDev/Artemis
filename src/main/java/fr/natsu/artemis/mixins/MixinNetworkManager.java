@@ -16,8 +16,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 
 /**
- * Intercepte les packets entrants au niveau Netty pour capter le trafic Apollo sur le canal
- * {@code lunar:apollo} avant que le client vanilla ne le traite.
+ * Intercepts incoming packets at the Netty level to grab the Apollo traffic on the {@code lunar:apollo}
+ * channel before the vanilla client handles it.
  */
 @Mixin(NetworkManager.class)
 public class MixinNetworkManager {
@@ -37,7 +37,7 @@ public class MixinNetworkManager {
             return;
         }
 
-        // Copie absolue : ne consomme pas le buffer (le packet est de toute façon annulé ensuite).
+        // Absolute copy: doesn't consume the buffer (the packet is cancelled right after anyway).
         PacketBuffer data = payload.getBufferData();
         byte[] bytes = new byte[data.readableBytes()];
         data.getBytes(data.readerIndex(), bytes);
@@ -50,7 +50,7 @@ public class MixinNetworkManager {
             ArtemisLightning.handleIncoming(bytes);
         }
 
-        // Canal géré par Artemis : on évite que le packet remonte au NetHandlerPlayClient vanilla.
+        // Channel handled by Artemis: stop the packet from reaching the vanilla NetHandlerPlayClient.
         ci.cancel();
     }
 }

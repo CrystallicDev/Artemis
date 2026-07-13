@@ -11,9 +11,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Masque des pièces d'armure d'un joueur (module Limb) : annule le rendu d'une pièce si elle est
- * cachée. {@code LayerArmorBase.renderLayer} est appelé par slot d'armure (1=bottes, 2=jambières,
- * 3=plastron, 4=casque), d'où {@code ArmorPiece = 5 - armorSlot}.
+ * Hides a player's armor pieces (Limb module): skips rendering a piece when it's hidden.
+ * {@code LayerArmorBase.renderLayer} is called per armor slot (1=boots, 2=leggings, 3=chestplate,
+ * 4=helmet), hence {@code ArmorPiece = 5 - armorSlot}.
  */
 @Mixin(LayerArmorBase.class)
 public class MixinLayerArmor {

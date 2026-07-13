@@ -11,10 +11,10 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module Colored Fire : traduit {@code lunarclient.apollo.coloredfire.v1.*} en couleurs de
- * {@link ColoredFireState}. Le rendu (teinte des flammes) est fait par {@code MixinRenderFire}.
+ * Colored Fire module: turns {@code lunarclient.apollo.coloredfire.v1.*} into {@link ColoredFireState}
+ * colors. The rendering (tinting the flames) is done by {@code MixinRenderFire}.
  *
- * <p>{@code OverrideColoredFireMessage} : player_uuid(#1), color(#2). Reset(uuid), ResetAll(vide).</p>
+ * <p>{@code OverrideColoredFireMessage}: player_uuid(#1), color(#2). Reset(uuid), ResetAll(empty).</p>
  */
 public final class ColoredFireModule {
 
@@ -73,6 +73,6 @@ public final class ColoredFireModule {
 
     private static void onResetAll(Any message) {
         ColoredFireState.resetAll();
-        Artemis.LOGGER.info("[ColoredFire] reset complet");
+        Artemis.LOGGER.info("[ColoredFire] reset all");
     }
 }

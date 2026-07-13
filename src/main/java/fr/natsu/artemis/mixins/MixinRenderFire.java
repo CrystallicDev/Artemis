@@ -13,9 +13,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Teinte les flammes d'un joueur selon sa couleur Colored Fire. Le feu vanilla est dessiné en
- * {@code POSITION_TEX} multiplié par {@code GlStateManager.color(1,1,1,1)} — on redirige cette
- * couleur si le joueur a une couleur custom.
+ * Tints a player's flames with their Colored Fire color. Vanilla fire is drawn in {@code POSITION_TEX}
+ * multiplied by {@code GlStateManager.color(1,1,1,1)}, so we redirect that color when the player has a
+ * custom one.
  */
 @Mixin(Render.class)
 public class MixinRenderFire {

@@ -3,10 +3,10 @@ package fr.natsu.artemis.module.vignette;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Source de vérité du module Vignette : la texture d'overlay plein écran courante et son opacité.
+ * Source of truth for the Vignette module: the current full-screen overlay texture and its opacity.
  *
- * <p>Écrit depuis le thread réseau ({@link VignetteModule}), lu depuis le thread de rendu
- * ({@code VignetteRenderer}). {@code volatile} suffit (publication d'une référence immuable).</p>
+ * <p>Written from the network thread ({@link VignetteModule}), read from the render thread
+ * ({@code VignetteRenderer}). {@code volatile} is enough (publishing an immutable reference).</p>
  */
 public final class VignetteState {
 
@@ -25,7 +25,7 @@ public final class VignetteState {
         VignetteState.texture = null;
     }
 
-    /** Texture de vignette active, ou {@code null} si aucune. */
+    /** The active vignette texture, or {@code null} if none. */
     public static ResourceLocation texture() {
         return texture;
     }

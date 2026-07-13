@@ -11,8 +11,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Injecte la couleur de surbrillance pendant la passe de rendu du FBO : remplace la couleur d'équipe
- * calculée par {@code setScoreTeamColor} par la couleur Apollo issue de {@link GlowState}.
+ * Injects the outline color during the FBO render pass: replaces the team color computed by
+ * {@code setScoreTeamColor} with the Apollo color from {@link GlowState}.
  */
 @Mixin(RendererLivingEntity.class)
 public abstract class MixinRendererLivingEntity<T extends EntityLivingBase> {

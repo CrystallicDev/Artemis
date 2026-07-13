@@ -5,16 +5,16 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * État des éclairs colorés actifs (feature hors Apollo, propre à Artemis).
+ * State of the active colored lightning bolts (a non-Apollo, Artemis-only feature).
  *
- * <p>Chaque éclair est purement visuel : une position monde, une couleur externe (glow) et une
- * couleur de cœur, une graine figeant sa forme, et un instant d'apparition. Ils vivent
- * {@link #LIFETIME_MS} puis sont retirés au rendu. Alimenté par le thread réseau
- * ({@link ArtemisLightning}) et lu par le thread de rendu (d'où la liste concurrente).</p>
+ * <p>Every bolt is purely visual: a world position, an outer (glow) color and a core color, a seed
+ * that freezes its shape, and a spawn time. They live for {@link #LIFETIME_MS} and are then dropped
+ * at render time. Fed by the network thread ({@link ArtemisLightning}) and read by the render thread,
+ * hence the concurrent list.</p>
  */
 public final class LightningState {
 
-    /** Durée de vie d'un éclair, en millisecondes. */
+    /** How long a bolt lives, in milliseconds. */
     public static final long LIFETIME_MS = 900L;
 
     private static final Random SEED_RANDOM = new Random();
@@ -23,12 +23,12 @@ public final class LightningState {
     private LightningState() {
     }
 
-    /** Ajoute un éclair aux positions/couleurs données (couleurs en ARGB, alpha ignoré). */
+    /** Adds a bolt at the given position/colors (colors are ARGB, alpha ignored). */
     public static void add(double x, double y, double z, int mainArgb, int coreArgb) {
         BOLTS.add(new Bolt(x, y, z, mainArgb, coreArgb, SEED_RANDOM.nextLong(), System.currentTimeMillis()));
     }
 
-    /** Les éclairs encore vivants ; purge au passage ceux qui ont expiré. */
+    /** The bolts still alive; drops the expired ones along the way. */
     public static List<Bolt> active() {
         long now = System.currentTimeMillis();
         BOLTS.removeIf(bolt -> now - bolt.spawnTime >= LIFETIME_MS);
@@ -39,7 +39,7 @@ public final class LightningState {
         return BOLTS.isEmpty();
     }
 
-    /** Un éclair coloré : position, couleurs (externe + cœur) pré-décomposées, graine, apparition. */
+    /** A colored bolt: position, pre-split outer/core colors, seed and spawn time. */
     public static final class Bolt {
 
         public final double x;
@@ -68,13 +68,13 @@ public final class LightningState {
             this.spawnTime = spawnTime;
         }
 
-        /** Alpha maître selon l'âge : plein au flash, fondu sur la fin de vie. */
+        /** Master alpha based on age: full during the flash, fading out near the end of life. */
         public float alpha(long now) {
             float age = (now - this.spawnTime) / (float) LIFETIME_MS;
             if (age < 0.0F) {
                 age = 0.0F;
             }
-            // Flash plein sur les 40 % premiers, puis fondu linéaire jusqu'à 0.
+            // Full flash for the first 40%, then a linear fade down to 0.
             return age < 0.4F ? 1.0F : Math.max(0.0F, 1.0F - (age - 0.4F) / 0.6F);
         }
     }

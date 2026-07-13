@@ -9,10 +9,10 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Module Vignette : traduit {@code lunarclient.apollo.vignette.v1.*} en état de {@link VignetteState}.
- * Rendu plein écran assuré par {@code VignetteRenderer}.
+ * Vignette module: turns {@code lunarclient.apollo.vignette.v1.*} into {@link VignetteState}. The
+ * full-screen rendering is done by {@code VignetteRenderer}.
  *
- * <p>{@code DisplayVignetteMessage} : resource_location(#1 string), opacity(#2 float).</p>
+ * <p>{@code DisplayVignetteMessage}: resource_location(#1 string), opacity(#2 float).</p>
  */
 public final class VignetteModule {
 
@@ -51,7 +51,7 @@ public final class VignetteModule {
         }
 
         VignetteState.display(new ResourceLocation(location), opacity);
-        Artemis.LOGGER.info("[Vignette] display '{}' opacite={}", location, opacity);
+        Artemis.LOGGER.info("[Vignette] display '{}' opacity={}", location, opacity);
     }
 
     private static void onReset(Any message) {

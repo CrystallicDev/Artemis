@@ -7,14 +7,14 @@ import java.util.UUID;
 import fr.natsu.artemis.module.nametag.AdventureText;
 
 /**
- * Source de vérité du module TeamView : la liste des coéquipiers et leurs positions/couleurs.
+ * Source of truth for the TeamView module: the list of teammates and their positions/colors.
  *
- * <p>{@code UpdateTeamMembersMessage} remplace la liste entière ; on publie donc une référence
- * immuable ({@code volatile}) écrite depuis le thread réseau et lue depuis le thread de rendu.</p>
+ * <p>{@code UpdateTeamMembersMessage} replaces the whole list, so we publish an immutable reference
+ * ({@code volatile}) written from the network thread and read from the render thread.</p>
  */
 public final class TeamState {
 
-    /** Un coéquipier à marquer dans le monde. */
+    /** A teammate to mark in the world. */
     public static final class Member {
         public final UUID uuid;
         public final double x;
