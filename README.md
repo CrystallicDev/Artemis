@@ -56,7 +56,8 @@ On top of porting Apollo's modules, Artemis adds a few features of its own that 
 - **Full RGB / Hex text rendering** -> Artemis renders true 24-bit hex colors (the `§x§r§r§g§g§b§b` format) **natively in the font renderer**, so they show up *everywhere* text is drawn: chat, tab list, scoreboard sidebar, team prefixes, floating nametags, and `/title` / `/subtitle`. On 1.8.9 both vanilla and Lunar fall back to the 16 legacy colors in most of these spots. Artemis lifts that limitation.
 - **Hex colors in the scoreboard & tab list** -> the vanilla 16-character limit on team prefixes/suffixes is removed client-side, so servers can send fully hex-colored player names and have them display correctly in the tab list and the sidebar.
 - **Rendering compatibility** -> the hex renderer hooks the single point every draw call goes through, so it keeps working under **OptiFine** and alongside mods that re-render the HUD themselves (such as **OldAnimations**, which rolls the tab list back to its 1.7.10 version).
-
+- **RGB Lightning Bolts** -> custom lightning bolts with new colors
+  
 These features are driven entirely by what the server sends: Artemis only needs the color to be encoded in the `§x` format inside the relevant string (team prefix, title, chat component, ...).
 
 ## Availability 
