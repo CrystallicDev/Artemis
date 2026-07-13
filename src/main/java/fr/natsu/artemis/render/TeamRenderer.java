@@ -25,12 +25,11 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les marqueurs TeamView façon Lunar : une petite flèche (caret pointant vers le bas) à la
- * couleur {@code markerColor}, au-dessus de la tête de chaque coéquipier taggé, visible à travers
- * les blocs.
+ * Draws the TeamView markers Lunar-style: a small arrow (a caret pointing down) in the
+ * {@code markerColor}, above each tagged teammate's head, visible through blocks.
  *
- * <p>La flèche est dessinée avec {@link Gui#drawRect} (le primitive 2D vanilla le plus fiable : il
- * gère lui-même l'état GL texture/blend de façon cohérente), après projection {@code gluProject}.</p>
+ * <p>The arrow is drawn with {@link Gui#drawRect} (the most reliable vanilla 2D primitive: it keeps
+ * its own GL texture/blend state consistent), after a {@code gluProject} projection.</p>
  */
 public final class TeamRenderer {
 
@@ -38,7 +37,7 @@ public final class TeamRenderer {
     private static final int ARROW_HEIGHT = 4;
     private static final int ARROW_THICKNESS = 1;
     private static final float ARROW_SLOPE = 1.0F;
-    /** La distance ({@code <n>m}) n'apparaît sous la flèche qu'au-delà de ce seuil (comme Lunar). */
+    /** The distance ({@code <n>m}) only shows under the arrow past this threshold (like Lunar). */
     private static final double DISTANCE_TEXT_THRESHOLD = 50.0D;
 
     @SubscribeEvent
@@ -57,15 +56,15 @@ public final class TeamRenderer {
         Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        // Passe 1 : projeter TANT QUE les matrices monde 3D sont actives.
+        // Pass 1: project WHILE the 3D world matrices are still active.
         List<int[]> markers = new ArrayList<>();
         for (TeamState.Member member : members) {
             if (member.uuid.equals(mc.thePlayer.getUniqueID())) {
                 continue;
             }
 
-            // Position : entité interpolée si le joueur est chargé (rendu fluide, synchro avec son
-            // affichage), sinon la position Apollo (joueur hors de portée / à travers les murs).
+            // Position: interpolated entity if the player is loaded (smooth, in sync with their
+            // rendering), otherwise the Apollo position (player out of range / through walls).
             double px = member.x;
             double py = member.y;
             double pz = member.z;
@@ -96,7 +95,7 @@ public final class TeamRenderer {
             return;
         }
 
-        // Passe 2 : dessiner en 2D.
+        // Pass 2: draw in 2D.
         setupOverlay(resolution);
         FontRenderer font = mc.fontRendererObj;
         for (int[] marker : markers) {
@@ -122,21 +121,21 @@ public final class TeamRenderer {
         return null;
     }
 
-    /** Chevron en V pointant vers le bas : deux bras qui convergent au point bas, via {@link Gui#drawRect}. */
+    /** A downward V chevron: two arms converging at the bottom point, via {@link Gui#drawRect}. */
     private static void drawArrow(int cx, int cy, int argb) {
         int top = cy - ARROW_HEIGHT;
         for (int row = 0; row < ARROW_HEIGHT; row++) {
-            // Bras écartés en haut, qui se rejoignent au point bas (vers la tête).
+            // Arms spread out at the top, meeting at the bottom point (toward the head).
             int offset = Math.round((ARROW_HEIGHT - 1 - row) * ARROW_SLOPE);
             int y = top + row;
-            // Bras gauche.
+            // Left arm.
             Gui.drawRect(cx - offset - ARROW_THICKNESS, y, cx - offset + ARROW_THICKNESS, y + 1, argb);
-            // Bras droit.
+            // Right arm.
             Gui.drawRect(cx + offset - ARROW_THICKNESS, y, cx + offset + ARROW_THICKNESS, y + 1, argb);
         }
     }
 
-    /** Projette une position (relative à la caméra) vers des coordonnées d'écran « scaled », ou {@code null} si derrière. */
+    /** Projects a position (relative to the camera) to "scaled" screen coords, or {@code null} if behind. */
     private static double[] project(double x, double y, double z, ScaledResolution resolution) {
         FloatBuffer modelView = BufferUtils.createFloatBuffer(16);
         FloatBuffer projection = BufferUtils.createFloatBuffer(16);

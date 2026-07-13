@@ -14,12 +14,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
- * Module Marker : traduit {@code lunarclient.apollo.marker.v1.*} en état de {@link MarkerState}.
- * Rendu (icône du target + infos conditionnelles) assuré par {@code MarkerRenderer}.
+ * Marker module: turns {@code lunarclient.apollo.marker.v1.*} into {@link MarkerState}. The
+ * rendering (target icon + conditional info) is done by {@code MarkerRenderer}.
  *
- * <p>{@code DisplayMarkerMessage} : id(#1), location(#2), owner_name(#4), flag(#5 type+couleur),
- * target(#6 oneof Item/Block/Entity/Player), style(#11). Les show_* du style sont des
- * {@code MarkerDisplayCondition} (NEVER/HOVER/ALWAYS).</p>
+ * <p>{@code DisplayMarkerMessage}: id(#1), location(#2), owner_name(#4), flag(#5 type+color),
+ * target(#6 oneof Item/Block/Entity/Player), style(#11). The style's show_* fields are
+ * {@code MarkerDisplayCondition} values (NEVER/HOVER/ALWAYS).</p>
  */
 public final class MarkerModule {
 
@@ -73,7 +73,7 @@ public final class MarkerModule {
                     style = parseStyle(in.readBytes());
                     break;
                 default:
-                    // owner_id(#3), duration(#7), notifs(#8/9/10) : ignorés.
+                    // owner_id(#3), duration(#7), notifs(#8/9/10): ignored.
                     in.skipField(tag);
             }
         }
@@ -111,7 +111,7 @@ public final class MarkerModule {
     }
 
     // ------------------------------------------------------------------
-    // Flag (type + couleur)
+    // Flag (type + color)
     // ------------------------------------------------------------------
 
     private static int[] parseFlag(ByteString data) throws Exception {
@@ -131,7 +131,7 @@ public final class MarkerModule {
         return new int[] {type, color};
     }
 
-    /** Un sous-message qui porte un {@code Color} en champ #1 (marker de type, ou ItemTarget). */
+    /** A sub-message carrying a {@code Color} in field #1 (marker type, or ItemTarget). */
     private static int parseColorInMessage(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         int color = DEFAULT_COLOR;
@@ -177,7 +177,7 @@ public final class MarkerModule {
         return MarkerState.Target.none();
     }
 
-    /** ItemTarget/BlockTarget : item_stack(#1 ItemStackIcon). */
+    /** ItemTarget/BlockTarget: item_stack(#1 ItemStackIcon). */
     private static ItemStack parseTargetItem(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         ItemStack item = null;
@@ -192,7 +192,7 @@ public final class MarkerModule {
         return item;
     }
 
-    /** ItemStackIcon : item_id(#1 int32) OU item_name(#2 string). */
+    /** ItemStackIcon: item_id(#1 int32) OR item_name(#2 string). */
     private static ItemStack parseItemStackIcon(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         int itemId = -1;
@@ -219,7 +219,7 @@ public final class MarkerModule {
         return item == null ? null : new ItemStack(item);
     }
 
-    /** EntityTarget : entity_type(#1 string). */
+    /** EntityTarget: entity_type(#1 string). */
     private static String parseEntityType(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         String entityType = null;
@@ -234,7 +234,7 @@ public final class MarkerModule {
         return entityType;
     }
 
-    /** PlayerTarget : uuid(#1 Uuid), name(#2 string). Retourne [UUID, String]. */
+    /** PlayerTarget: uuid(#1 Uuid), name(#2 string). Returns [UUID, String]. */
     private static Object[] parsePlayerTarget(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         UUID playerId = null;
@@ -294,7 +294,7 @@ public final class MarkerModule {
                     style[3] = in.readEnum();
                     break;
                 default:
-                    // animate(#2), compact(#3), owner_suffix(#5), description_display(#11) : ignorés.
+                    // animate(#2), compact(#3), owner_suffix(#5), description_display(#11): ignored.
                     in.skipField(tag);
             }
         }

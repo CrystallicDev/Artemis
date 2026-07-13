@@ -10,12 +10,12 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module Waypoint : traduit {@code lunarclient.apollo.waypoint.v1.*} en état de {@link WaypointState}.
- * Rendu (beam + label) assuré par {@code WaypointRenderer}.
+ * Waypoint module: turns {@code lunarclient.apollo.waypoint.v1.*} into {@link WaypointState}. The
+ * rendering (beam + label) is done by {@code WaypointRenderer}.
  *
- * <p>{@code DisplayWaypointMessage} : name(#1 str), location(#2 BlockLocation), color(#3 Color),
+ * <p>{@code DisplayWaypointMessage}: name(#1 str), location(#2 BlockLocation), color(#3 Color),
  * prevent_removal(#4 bool), hidden(#5 bool), show_beam(#6 bool), highlight_block(#7 bool),
- * highlight_block_line_width(#8 float), style(#9). BlockLocation x/y/z sont des sint32 (zigzag).</p>
+ * highlight_block_line_width(#8 float), style(#9). BlockLocation x/y/z are sint32 (zigzag).</p>
  */
 public final class WaypointModule {
 
@@ -47,7 +47,7 @@ public final class WaypointModule {
         boolean showBeam = false;
         boolean highlightBlock = false;
         float lineWidth = 0.0F;
-        // Défauts si le style n'est pas envoyé : on affiche texte et distance.
+        // Defaults when no style is sent: show both text and distance.
         boolean[] style = {true, true};
 
         int tag;
@@ -78,7 +78,7 @@ public final class WaypointModule {
                     style = parseStyle(in.readBytes());
                     break;
                 default:
-                    // #4 prevent_removal : ignoré.
+                    // #4 prevent_removal: ignored.
                     in.skipField(tag);
             }
         }
@@ -119,7 +119,7 @@ public final class WaypointModule {
         }
     }
 
-    /** Lit le champ name(#1 string) d'un message simple (Remove/Show/Hide). */
+    /** Reads the name(#1 string) field of a simple message (Remove/Show/Hide). */
     private static String readName(Any message) throws Exception {
         CodedInputStream in = message.getValue().newCodedInput();
         String name = null;
@@ -134,7 +134,7 @@ public final class WaypointModule {
         return name;
     }
 
-    /** Parse un {@code WaypointTextStyle} : show_text(#1), show_distance(#9). Retourne [showText, showDistance]. */
+    /** Parses a {@code WaypointTextStyle}: show_text(#1), show_distance(#9). Returns [showText, showDistance]. */
     private static boolean[] parseStyle(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         boolean showText = true;
@@ -155,7 +155,7 @@ public final class WaypointModule {
         return new boolean[] {showText, showDistance};
     }
 
-    /** Parse un {@code BlockLocation} : world(#1 str, ignoré), x(#2), y(#3), z(#4) en sint32. */
+    /** Parses a {@code BlockLocation}: world(#1 str, ignored), x(#2), y(#3), z(#4) as sint32. */
     private static int[] parseBlockLocation(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         int x = 0;

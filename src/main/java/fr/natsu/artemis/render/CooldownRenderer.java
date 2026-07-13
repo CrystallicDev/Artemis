@@ -16,13 +16,13 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les cooldowns Apollo dans le HUD, façon Lunar Client : un anneau « track » ({@code circleEnd})
- * recouvert d'un arc de progression ({@code circleStart}) proportionnel au temps restant (qui se vide
- * = animation), des anneaux de bord ({@code circleEdge}), l'icône de l'item (avec glint) au centre et
- * le temps restant en texte ({@code textColor}).
+ * Draws the Apollo cooldowns in the HUD, Lunar Client style: a "track" ring ({@code circleEnd})
+ * covered by a progress arc ({@code circleStart}) proportional to the remaining time (which empties
+ * out as the animation), edge rings ({@code circleEdge}), the item icon (with glint) in the center,
+ * and the remaining time as text ({@code textColor}).
  *
- * <p>Structure et proportions reprises du renderer cooldown de Lunar : cellule ~34px, item à 1.4×,
- * anneau ~11.5→15.</p>
+ * <p>Layout and proportions taken from Lunar's cooldown renderer: ~34px cell, item at 1.4×, ring
+ * ~11.5 to 15.</p>
  */
 public final class CooldownRenderer {
 
@@ -56,7 +56,7 @@ public final class CooldownRenderer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    /** Position du i-ème cooldown à partir de l'ancre, selon le sens configuré. */
+    /** Position of the i-th cooldown from the anchor, in the configured direction. */
     public static int[] slotPosition(int anchorX, int anchorY, int index) {
         int offset = index * SLOT_SPACING;
         switch (ArtemisConfig.cooldownDirection) {
@@ -72,7 +72,7 @@ public final class CooldownRenderer {
         }
     }
 
-    /** Aperçu d'un cooldown factice centré en (cx, cy), pour l'écran de configuration. */
+    /** Preview of a fake cooldown centered at (cx, cy), for the config screen. */
     public static void renderPreview(int cx, int cy) {
         int start = 0x99595959;
         int end = 0xFFE5E5E5;
@@ -91,17 +91,17 @@ public final class CooldownRenderer {
     private void renderCooldown(Minecraft mc, CooldownState.Entry entry, float cx, float cy) {
         float fraction = entry.remainingFraction();
 
-        // Fond sombre discret sous l'anneau.
+        // Subtle dark backdrop under the ring.
         fillArc(cx, cy, RADIUS_OUTER, 0.0F, 0.0F, 360.0F, 0x55000000);
-        // Track complet (couleur "vide").
+        // Full track (the "empty" color).
         fillArc(cx, cy, RADIUS_OUTER, RADIUS_INNER, 0.0F, 360.0F, entry.circleEndArgb);
-        // Arc de progression (couleur "plein"), balayé depuis le haut, proportionnel au restant.
+        // Progress arc (the "full" color), swept from the top, proportional to what remains.
         fillArc(cx, cy, RADIUS_OUTER, RADIUS_INNER, -90.0F, 360.0F * fraction, entry.circleStartArgb);
-        // Anneaux de bord fins (intérieur + extérieur).
+        // Thin edge rings (inner + outer).
         fillArc(cx, cy, RADIUS_OUTER, RADIUS_OUTER - 0.8F, 0.0F, 360.0F, entry.circleEdgeArgb);
         fillArc(cx, cy, RADIUS_INNER + 0.8F, RADIUS_INNER, 0.0F, 360.0F, entry.circleEdgeArgb);
 
-        // Icône de l'item (avec glint), mise à l'échelle et centrée.
+        // Item icon (with glint), scaled and centered.
         if (entry.icon != null) {
             RenderItem renderItem = mc.getRenderItem();
             GlStateManager.pushMatrix();
@@ -116,7 +116,7 @@ public final class CooldownRenderer {
             GlStateManager.popMatrix();
         }
 
-        // Temps restant en texte, sous l'anneau.
+        // Remaining time as text, under the ring.
         FontRenderer font = mc.fontRendererObj;
         String label = formatRemaining(entry.remainingMillis());
         float textX = cx - font.getStringWidth(label) / 2.0F;
@@ -138,8 +138,8 @@ public final class CooldownRenderer {
     }
 
     /**
-     * Dessine un secteur d'anneau (ou un disque si {@code rInner=0}) entre deux rayons, depuis
-     * {@code startDeg} sur {@code sweepDeg} degrés (sens horaire depuis le haut si start=-90).
+     * Draws a ring sector (or a disc if {@code rInner=0}) between two radii, from {@code startDeg}
+     * over {@code sweepDeg} degrees (clockwise from the top if start=-90).
      */
     private static void fillArc(float cx, float cy, float rOuter, float rInner,
                                 float startDeg, float sweepDeg, int argb) {

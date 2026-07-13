@@ -10,8 +10,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 /**
- * Écran de configuration des HUD Artemis : déplace à la souris les éléments (cooldowns, inventaire),
- * choisit le sens des cooldowns et active/désactive le HUD d'inventaire. Sauvegardé à la fermeture.
+ * Artemis HUD config screen: drag the elements (cooldowns) around with the mouse and choose the
+ * cooldown direction. Saved on close.
  */
 public final class GuiHudConfig extends GuiScreen {
 

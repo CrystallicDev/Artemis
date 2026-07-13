@@ -16,26 +16,26 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Rendu du Glowing en deux passes, piloté par {@link GlowState} :
+ * Two-pass Glowing render, driven by {@link GlowState}:
  *
  * <ol>
- *   <li>{@link #renderEntitiesToFramebuffer} re-rend les joueurs en surbrillance comme silhouettes
- *       plates dans un FBO dédié (couleur injectée via {@code MixinRendererLivingEntity} qui lit
+ *   <li>{@link #renderEntitiesToFramebuffer} re-renders the glowing players as flat silhouettes into a
+ *       dedicated FBO (color injected via {@code MixinRendererLivingEntity}, which reads
  *       {@link GlowState}).</li>
- *   <li>{@link #displayFramebuffer} applique {@link OutlineShader} sur ce FBO pour transformer les
- *       silhouettes en contours composités à l'écran.</li>
+ *   <li>{@link #displayFramebuffer} applies {@link OutlineShader} to that FBO to turn the silhouettes
+ *       into outlines composited onto the screen.</li>
  * </ol>
  *
- * <p>Adapté du {@code ShaderManager} d'Eterion. Tout s'exécute sur le thread de rendu.</p>
+ * <p>Adapted from Eterion's {@code ShaderManager}. Everything runs on the render thread.</p>
  */
 public final class GlowRenderer {
 
     private static OutlineShader outlineShader;
     private static GlowFramebuffer outlineFramebuffer;
 
-    /** Entité en cours de rendu dans le FBO ; lue par le mixin de couleur d'outline. */
+    /** Entity currently being rendered into the FBO; read by the outline color mixin. */
     public static Entity renderTarget = null;
-    /** Vrai pendant la passe de rendu du FBO ; gate les mixins (team placeholder, couleur). */
+    /** True during the FBO render pass; gates the mixins (team placeholder, color). */
     public static boolean isRenderingOutline = false;
 
     private static boolean foundOneToRender = false;
@@ -46,8 +46,8 @@ public final class GlowRenderer {
     }
 
     /**
-     * Initialise (ou réinitialise après resize) le shader et le framebuffer. Doit être appelé avec
-     * un contexte GL valide.
+     * Initializes (or re-initializes after a resize) the shader and framebuffer. Must be called with a
+     * valid GL context.
      */
     private static void ensureInitialised() {
         Minecraft mc = Minecraft.getMinecraft();
@@ -58,7 +58,7 @@ public final class GlowRenderer {
                     "shaders/program/outline_vertex.vsh",
                     "shaders/program/outline_fragment.fsh");
             } catch (Exception e) {
-                Artemis.LOGGER.error("[Glow] impossible de charger le shader d'outline", e);
+                Artemis.LOGGER.error("[Glow] could not load the outline shader", e);
                 return;
             }
         }
@@ -78,7 +78,7 @@ public final class GlowRenderer {
     }
 
     // ------------------------------------------------------------------
-    // Passe 1 : silhouettes -> framebuffer
+    // Pass 1: silhouettes -> framebuffer
     // ------------------------------------------------------------------
 
     public static void renderEntitiesToFramebuffer(Entity renderViewEntity, ICamera camera, float partialTicks) {
@@ -86,8 +86,8 @@ public final class GlowRenderer {
         if (mc.theWorld == null || GlowState.isEmpty()) {
             return;
         }
-        // Fast Render (OptiFine) casse notre passe FBO + shader (écran noir) : on ne rend pas le
-        // Glowing tant qu'il est actif. Testé à chaque frame -> se réactive dès que l'option est coupée.
+        // Fast Render (OptiFine) breaks our FBO + shader pass (black screen): don't render the Glowing
+        // while it's on. Checked every frame -> comes back as soon as the option is turned off.
         if (OptiFineCompat.isFastRender()) {
             return;
         }
@@ -137,10 +137,9 @@ public final class GlowRenderer {
             return false;
         }
         if (entity == renderViewEntity) {
-            // Self-glow : seulement si activé ET en 3e personne. En 1ère personne le modèle joueur n'est
-            // pas visible, mais sa silhouette rendue dans le FBO couvre les bords de l'écran -> le shader
-            // d'outline (Sobel) détecte une arête sur le bord du framebuffer = fines bandes colorées sur
-            // le pourtour de l'écran.
+            // Self-glow: only if enabled AND in third person. In first person the player model isn't
+            // visible, but its silhouette in the FBO covers the screen edges -> the outline shader
+            // (Sobel) finds an edge on the framebuffer border = thin colored bands around the screen.
             if (!ArtemisSettings.renderSelf || Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
                 return false;
             }
@@ -153,7 +152,7 @@ public final class GlowRenderer {
     }
 
     // ------------------------------------------------------------------
-    // Passe 2 : framebuffer -> contour à l'écran
+    // Pass 2: framebuffer -> outline on screen
     // ------------------------------------------------------------------
 
     public static void displayFramebuffer() {

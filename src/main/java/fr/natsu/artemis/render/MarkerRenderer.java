@@ -26,10 +26,10 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les markers Apollo de façon complète : une icône issue du {@code target} (item, tête de joueur,
- * ou repère générique) sur un fond coloré par le {@code flag}, avec des lignes d'info (description,
- * propriétaire, coordonnées, distance) dont l'affichage suit un {@code MarkerDisplayCondition}
- * (notamment {@code HOVER} = affiché seulement quand le marker est visé).
+ * Full render of the Apollo markers: an icon derived from the {@code target} (item, player head, or a
+ * generic marker) over a background colored by the {@code flag}, with info lines (description, owner,
+ * coordinates, distance) whose visibility follows a {@code MarkerDisplayCondition} (notably
+ * {@code HOVER} = shown only when the marker is being looked at).
  */
 public final class MarkerRenderer {
 
@@ -86,11 +86,11 @@ public final class MarkerRenderer {
                                    int distance, boolean hovered) {
         int radius = Math.max(4, Math.round(5 * marker.scale));
 
-        // Le repère permanent : un petit losange à la couleur du flag (contour sombre).
+        // The permanent marker: a small diamond in the flag color (dark outline).
         drawDiamond(x, y, radius + 1, 0xFF000000);
         drawDiamond(x, y, radius, opaque(marker.iconArgb));
 
-        // Lignes d'info conditionnelles, sous le losange. Tête/item = inline, taille du texte.
+        // Conditional info lines, below the diamond. Head/item = inline, at text size.
         int lineY = y + radius + 4;
         if (shouldShow(marker.showDescription, hovered)) {
             lineY = drawDescriptionLine(mc, font, marker, x, lineY);
@@ -109,7 +109,7 @@ public final class MarkerRenderer {
         }
     }
 
-    /** Losange plein (rangées empilées de {@link Gui#drawRect}), largeur maximale au centre. */
+    /** Filled diamond (stacked rows of {@link Gui#drawRect}), widest at the center. */
     private static void drawDiamond(int cx, int cy, int radius, int argb) {
         for (int dy = -radius; dy <= radius; dy++) {
             int halfWidth = radius - Math.abs(dy);
@@ -117,7 +117,7 @@ public final class MarkerRenderer {
         }
     }
 
-    /** Ligne de description : selon le target, une tête+nom (Player), un item+id (Item/Block) ou l'id. */
+    /** Description line: depending on the target, a head+name (Player), an item+id (Item/Block), or the id. */
     private static int drawDescriptionLine(Minecraft mc, FontRenderer font, MarkerState.Marker marker, int x, int y) {
         MarkerState.Target target = marker.target;
         int color = opaque(marker.iconArgb);
@@ -138,7 +138,7 @@ public final class MarkerRenderer {
         return drawLine(font, marker.id, x, y, color, marker.textShadow);
     }
 
-    /** Ligne « [petite tête] texte », inline, à la taille du texte. */
+    /** A "[small head] text" line, inline, at text size. */
     private static int drawHeadNameLine(Minecraft mc, FontRenderer font, boolean showHead, String skinName,
                                         String text, int x, int y, int color, boolean shadow) {
         if (!showHead) {
@@ -152,7 +152,7 @@ public final class MarkerRenderer {
         return y + LINE_HEIGHT;
     }
 
-    /** Ligne « [petite icône item] texte », inline. */
+    /** A "[small item icon] text" line, inline. */
     private static int drawItemNameLine(Minecraft mc, FontRenderer font, net.minecraft.item.ItemStack stack,
                                         String text, int x, int y, int color, boolean shadow) {
         int icon = font.FONT_HEIGHT + 2;
@@ -163,7 +163,7 @@ public final class MarkerRenderer {
         return y + LINE_HEIGHT;
     }
 
-    /** Item mis à l'échelle, coin haut-gauche en (x, y). */
+    /** Scaled item, top-left corner at (x, y). */
     private static void drawItem(Minecraft mc, net.minecraft.item.ItemStack stack, int x, int y, int size) {
         RenderItem renderItem = mc.getRenderItem();
         float scale = size / 16.0F;
@@ -180,7 +180,7 @@ public final class MarkerRenderer {
         GlStateManager.popMatrix();
     }
 
-    /** Tête de joueur (visage + chapeau), coin haut-gauche en (x, y). */
+    /** Player head (face + hat), top-left corner at (x, y). */
     private static void drawPlayerHead(Minecraft mc, String name, int x, int y, int size) {
         ResourceLocation skin = AbstractClientPlayer.getLocationSkin(name == null ? "" : name);
         mc.getTextureManager().bindTexture(skin);
@@ -208,7 +208,7 @@ public final class MarkerRenderer {
         return y + LINE_HEIGHT;
     }
 
-    /** ALWAYS -> toujours ; HOVER (et UNSPECIFIED) -> seulement si visé ; NEVER -> jamais. */
+    /** ALWAYS -> always; HOVER (and UNSPECIFIED) -> only when looked at; NEVER -> never. */
     private static boolean shouldShow(int condition, boolean hovered) {
         if (condition == MarkerState.COND_ALWAYS) {
             return true;

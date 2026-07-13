@@ -23,8 +23,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend les waypoints Apollo : un beam vertical coloré (beacon) au bloc, et un label (nom + distance)
- * projeté à l'écran, clampé au bord quand le waypoint est hors champ.
+ * Draws the Apollo waypoints: a colored vertical beam (beacon) at the block, and a label (name +
+ * distance) projected to the screen, clamped to the edge when the waypoint is off-screen.
  */
 public final class WaypointRenderer {
 
@@ -49,7 +49,7 @@ public final class WaypointRenderer {
         Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        // Passe 1 (matrices monde 3D) : beams + projection des labels.
+        // Pass 1 (3D world matrices): beams + label projection.
         List<Object[]> labels = new ArrayList<>();
         for (WaypointState.Waypoint waypoint : WaypointState.all()) {
             if (waypoint.hidden) {
@@ -82,7 +82,7 @@ public final class WaypointRenderer {
             return;
         }
 
-        // Passe 2 (2D) : labels nom + distance.
+        // Pass 2 (2D): name + distance labels.
         int screenWidth = resolution.getScaledWidth();
         int screenHeight = resolution.getScaledHeight();
         setupOverlay(resolution);
@@ -103,7 +103,7 @@ public final class WaypointRenderer {
         cleanupOverlay();
     }
 
-    /** Beam vertical (deux quads croisés) au bloc, visible à travers les blocs. */
+    /** Vertical beam (two crossed quads) at the block, visible through blocks. */
     private static void renderBeam(double rx, double ry, double rz, int argb) {
         float r = ((argb >> 16) & 0xFF) / 255.0F;
         float g = ((argb >> 8) & 0xFF) / 255.0F;
@@ -122,12 +122,12 @@ public final class WaypointRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        // Quad le long de X.
+        // Quad along X.
         worldRenderer.pos(-BEAM_HALF_WIDTH, 0.0D, 0.0D).color(r, g, b, BEAM_ALPHA).endVertex();
         worldRenderer.pos(BEAM_HALF_WIDTH, 0.0D, 0.0D).color(r, g, b, BEAM_ALPHA).endVertex();
         worldRenderer.pos(BEAM_HALF_WIDTH, BEAM_HEIGHT, 0.0D).color(r, g, b, BEAM_ALPHA).endVertex();
         worldRenderer.pos(-BEAM_HALF_WIDTH, BEAM_HEIGHT, 0.0D).color(r, g, b, BEAM_ALPHA).endVertex();
-        // Quad le long de Z.
+        // Quad along Z.
         worldRenderer.pos(0.0D, 0.0D, -BEAM_HALF_WIDTH).color(r, g, b, BEAM_ALPHA).endVertex();
         worldRenderer.pos(0.0D, 0.0D, BEAM_HALF_WIDTH).color(r, g, b, BEAM_ALPHA).endVertex();
         worldRenderer.pos(0.0D, BEAM_HEIGHT, BEAM_HALF_WIDTH).color(r, g, b, BEAM_ALPHA).endVertex();
@@ -137,12 +137,12 @@ public final class WaypointRenderer {
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.enableCull();
-        // NE PAS ré-activer le lighting : il est déjà désactivé au RenderWorldLastEvent. Le rallumer le
-        // laisse actif jusqu'au rendu 2D (HUD/inventaire) -> texte grisé et glint d'enchantement noir.
-        // Ce bug n'apparaissait que waypoint hors écran : sinon la passe overlay des labels laissait le
-        // lighting désactivé et masquait la fuite.
-        // Blend func ADDITIF (SRC_ALPHA, ONE) posé plus haut : le remettre au défaut avant de couper le
-        // blend, sinon il resterait dans le cache GlStateManager et délaverait le texte du HUD.
+        // Do NOT re-enable lighting: it's already off at RenderWorldLastEvent. Turning it back on leaves
+        // it active through the next 2D pass (HUD/inventory) -> greyed text and black enchantment glint.
+        // This bug only showed with the waypoint off-screen: otherwise the label overlay pass left
+        // lighting disabled and masked the leak.
+        // We set an ADDITIVE blend func (SRC_ALPHA, ONE) above: put it back to the default before turning
+        // blending off, otherwise it lingers in the GlStateManager cache and washes out the HUD text.
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
@@ -150,7 +150,7 @@ public final class WaypointRenderer {
         GlStateManager.popMatrix();
     }
 
-    /** Contour filaire (wireframe) du bloc du waypoint, visible à travers les blocs. */
+    /** Wireframe outline of the waypoint's block, visible through blocks. */
     private static void renderBlockHighlight(double rx, double ry, double rz, int argb, float lineWidth) {
         float r = ((argb >> 16) & 0xFF) / 255.0F;
         float g = ((argb >> 8) & 0xFF) / 255.0F;
@@ -169,7 +169,7 @@ public final class WaypointRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldRenderer = tessellator.getWorldRenderer();
         worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        // 12 arêtes du cube unité (0..1).
+        // The 12 edges of the unit cube (0..1).
         edge(worldRenderer, 0, 0, 0, 1, 0, 0, r, g, b);
         edge(worldRenderer, 1, 0, 0, 1, 0, 1, r, g, b);
         edge(worldRenderer, 1, 0, 1, 0, 0, 1, r, g, b);
@@ -186,11 +186,11 @@ public final class WaypointRenderer {
 
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
-        // On ne ré-active PAS le lighting (désactivé au RenderWorldLastEvent) : le laisser actif noircit
-        // le rendu 2D suivant (glint d'enchantement noir, texte du HUD grisé).
+        // Do NOT re-enable lighting (it's off at RenderWorldLastEvent): leaving it on darkens the next
+        // 2D pass (black enchantment glint, greyed-out HUD text).
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
-        GL11.glLineWidth(1.0F); // ne pas laisser fuiter l'épaisseur de trait vers d'autres rendus (F3...)
+        GL11.glLineWidth(1.0F); // don't leak the line width into other rendering (F3...)
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
     }
@@ -201,7 +201,7 @@ public final class WaypointRenderer {
         wr.pos(x2, y2, z2).color(r, g, b, 1.0F).endVertex();
     }
 
-    // Buffers/matrices réutilisés (thread de rendu unique) pour éviter des allocations par waypoint.
+    // Reused buffers/matrices (single render thread) to avoid allocating per waypoint.
     private static final FloatBuffer MODELVIEW_BUF = BufferUtils.createFloatBuffer(16);
     private static final FloatBuffer PROJECTION_BUF = BufferUtils.createFloatBuffer(16);
     private static final IntBuffer VIEWPORT_BUF = BufferUtils.createIntBuffer(16);
@@ -210,12 +210,12 @@ public final class WaypointRenderer {
     private static final int[] VIEWPORT = new int[4];
 
     /**
-     * Projette un point (relatif à la caméra) en coordonnées écran scaled. Retourne {@code null}
-     * UNIQUEMENT si le point est <b>derrière</b> la caméra (via le signe de {@code w} en clip space).
+     * Projects a point (relative to the camera) to scaled screen coordinates. Returns {@code null}
+     * ONLY if the point is <b>behind</b> the camera (via the sign of {@code w} in clip space).
      *
-     * <p>Contrairement à {@code gluProject}, on n'utilise PAS la profondeur ({@code winZ}) : un point
-     * au-delà du far plane (waypoint très lointain) se projette quand même correctement en X/Y, il ne
-     * faut donc pas le rejeter. Le clamp au bord de l'écran est fait par l'appelant.</p>
+     * <p>Unlike {@code gluProject}, we do NOT use depth ({@code winZ}): a point beyond the far plane
+     * (a very distant waypoint) still projects correctly in X/Y, so it must not be rejected. The
+     * edge-clamping is done by the caller.</p>
      */
     private static double[] project(double x, double y, double z, ScaledResolution resolution) {
         MODELVIEW_BUF.clear();
@@ -234,13 +234,13 @@ public final class WaypointRenderer {
         float ez = MODELVIEW[2] * (float) x + MODELVIEW[6] * (float) y + MODELVIEW[10] * (float) z + MODELVIEW[14];
         float ew = MODELVIEW[3] * (float) x + MODELVIEW[7] * (float) y + MODELVIEW[11] * (float) z + MODELVIEW[15];
 
-        // clip = Projection * eye ; seuls X, Y et W nous intéressent (pas la profondeur Z).
+        // clip = Projection * eye; only X, Y and W matter to us (not the depth Z).
         float cx = PROJECTION[0] * ex + PROJECTION[4] * ey + PROJECTION[8] * ez + PROJECTION[12] * ew;
         float cy = PROJECTION[1] * ex + PROJECTION[5] * ey + PROJECTION[9] * ez + PROJECTION[13] * ew;
         float cw = PROJECTION[3] * ex + PROJECTION[7] * ey + PROJECTION[11] * ez + PROJECTION[15] * ew;
 
         if (cw <= 1.0E-4F) {
-            return null; // derrière la caméra (ou dessus) : coordonnées non fiables -> on n'affiche pas
+            return null; // behind the camera (or on it): coordinates aren't reliable -> don't show it
         }
 
         float ndcX = cx / cw;
