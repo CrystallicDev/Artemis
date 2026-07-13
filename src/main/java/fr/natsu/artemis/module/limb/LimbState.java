@@ -5,13 +5,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Source de vérité du module Limb : les parties de corps masquées par joueur (bitmask des
- * {@code BodyPart}). Écrit depuis le thread réseau ({@link LimbModule}), lu depuis le rendu
+ * Source of truth for the Limb module: the hidden body parts per player (a bitmask of
+ * {@code BodyPart}). Written from the network thread ({@link LimbModule}), read from the render
  * ({@code MixinModelPlayer}).
  */
 public final class LimbState {
 
-    /** Valeurs {@code BodyPart} (proto). */
+    /** {@code BodyPart} values (proto). */
     public static final int HEAD = 1;
     public static final int TORSO = 2;
     public static final int LEFT_ARM = 3;
@@ -19,7 +19,7 @@ public final class LimbState {
     public static final int LEFT_LEG = 5;
     public static final int RIGHT_LEG = 6;
 
-    /** Valeurs {@code ArmorPiece} (proto). */
+    /** {@code ArmorPiece} values (proto). */
     public static final int HELMET = 1;
     public static final int CHESTPLATE = 2;
     public static final int LEGGINGS = 3;
@@ -31,17 +31,17 @@ public final class LimbState {
     private LimbState() {
     }
 
-    /** Bit associé à une {@code BodyPart}. */
+    /** Bit for a given {@code BodyPart}. */
     public static int bit(int bodyPart) {
         return 1 << bodyPart;
     }
 
-    /** Masque les parties données (ajoute au masque existant). */
+    /** Hides the given parts (adds to the existing mask). */
     public static void hide(UUID player, int mask) {
         HIDDEN.merge(player, mask, (a, b) -> a | b);
     }
 
-    /** Ré-affiche les parties données ; masque vide -> ré-affiche tout. */
+    /** Shows the given parts again; an empty mask shows everything again. */
     public static void reset(UUID player, int mask) {
         if (mask == 0) {
             HIDDEN.remove(player);
@@ -60,14 +60,14 @@ public final class LimbState {
         return HIDDEN.isEmpty();
     }
 
-    /** Masque des parties cachées du joueur, ou {@code 0}. */
+    /** The player's hidden-parts mask, or {@code 0}. */
     public static int maskOrZero(UUID player) {
         Integer mask = HIDDEN.get(player);
         return mask == null ? 0 : mask;
     }
 
     // ------------------------------------------------------------------
-    // Pièces d'armure cachées (masque séparé)
+    // Hidden armor pieces (separate mask)
     // ------------------------------------------------------------------
 
     public static void hideArmor(UUID player, int mask) {
@@ -88,7 +88,7 @@ public final class LimbState {
         });
     }
 
-    /** Masque des pièces d'armure cachées du joueur, ou {@code 0}. */
+    /** The player's hidden-armor mask, or {@code 0}. */
     public static int armorMaskOrZero(UUID player) {
         Integer mask = HIDDEN_ARMOR.get(player);
         return mask == null ? 0 : mask;

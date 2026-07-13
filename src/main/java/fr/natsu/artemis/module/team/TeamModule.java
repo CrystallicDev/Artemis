@@ -16,12 +16,12 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module TeamView : traduit {@code lunarclient.apollo.team.v1.*} en liste de {@link TeamState}.
- * Rendu world-space assuré par {@code TeamRenderer}.
+ * TeamView module: turns {@code lunarclient.apollo.team.v1.*} into a {@link TeamState} list. The
+ * world-space rendering is handled by {@code TeamRenderer}.
  *
- * <p>{@code UpdateTeamMembersMessage} : members(#1 repeated TeamMember). Chaque {@code TeamMember} :
- * player_uuid(#1 Uuid), player_display_name(#2 Component, ignoré), location(#3 Location),
- * marker_color(#4 Color), adventure_json_player_name(#5 string, voie hex du nom).</p>
+ * <p>{@code UpdateTeamMembersMessage}: members(#1 repeated TeamMember). Each {@code TeamMember}:
+ * player_uuid(#1 Uuid), player_display_name(#2 Component, ignored), location(#3 Location),
+ * marker_color(#4 Color), adventure_json_player_name(#5 string, the hex path for the name).</p>
  */
 public final class TeamModule {
 
@@ -54,7 +54,7 @@ public final class TeamModule {
         }
 
         TeamState.update(members);
-        Artemis.LOGGER.info("[TeamView] {} coequipier(s)", members.size());
+        Artemis.LOGGER.info("[TeamView] {} teammate(s)", members.size());
     }
 
     private static void onReset(Any message) {
@@ -85,7 +85,7 @@ public final class TeamModule {
                     name = AdventureText.parse(in.readString());
                     break;
                 default:
-                    // #2 (Component legacy) et autres champs ignorés.
+                    // #2 (legacy Component) and other fields are ignored.
                     in.skipField(tag);
             }
         }
@@ -96,7 +96,7 @@ public final class TeamModule {
         return new TeamState.Member(uuid, loc[0], loc[1], loc[2], markerArgb, name);
     }
 
-    /** Parse un {@code Location} : world(#1 string, ignoré), x(#2), y(#3), z(#4) doubles. */
+    /** Parses a {@code Location}: world(#1 string, ignored), x(#2), y(#3), z(#4) doubles. */
     private static double[] parseLocation(ByteString data) throws Exception {
         CodedInputStream in = data.newCodedInput();
         double x = 0;

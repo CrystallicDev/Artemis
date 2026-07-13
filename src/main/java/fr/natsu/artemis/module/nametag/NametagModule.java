@@ -13,11 +13,11 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module Nametag : traduit les messages {@code lunarclient.apollo.nametag.v1.*} en lignes de
- * nametag colorées dans {@link NametagState}. Le rendu est assuré par {@code NametagRenderer}.
+ * Nametag module: turns the {@code lunarclient.apollo.nametag.v1.*} messages into colored nametag
+ * lines in {@link NametagState}. The rendering is handled by {@code NametagRenderer}.
  *
- * <p>{@code OverrideNametagMessage} : {@code player_uuid} (#1), {@code lines} (#2, legacy Component),
- * {@code adventure_json_lines} (#3, JSON — voie hex). On privilégie le champ #3.</p>
+ * <p>{@code OverrideNametagMessage}: {@code player_uuid} (#1), {@code lines} (#2, legacy Component),
+ * {@code adventure_json_lines} (#3, JSON, the hex path). We prefer field #3.</p>
  */
 public final class NametagModule {
 
@@ -48,7 +48,7 @@ public final class NametagModule {
                     jsonLines.add(in.readString());
                     break;
                 default:
-                    // #2 (lines Component legacy) et autres champs ignorés.
+                    // #2 (legacy Component lines) and other fields are ignored.
                     in.skipField(tag);
             }
         }
@@ -58,9 +58,9 @@ public final class NametagModule {
         }
 
         if (jsonLines.isEmpty()) {
-            // Pas de lignes adventure : rien à afficher en hex (le legacy #2 n'est pas encore géré).
+            // No adventure lines: nothing to show in hex (the legacy #2 isn't handled yet).
             NametagState.reset(player);
-            Artemis.LOGGER.warn("[Nametag] override {} sans adventure_json_lines (legacy non gere)", player);
+            Artemis.LOGGER.warn("[Nametag] override {} without adventure_json_lines (legacy not handled)", player);
             return;
         }
 
@@ -69,7 +69,7 @@ public final class NametagModule {
             lines.add(AdventureText.parse(json));
         }
         NametagState.override(player, lines);
-        Artemis.LOGGER.info("[Nametag] override {} ({} ligne(s))", player, lines.size());
+        Artemis.LOGGER.info("[Nametag] override {} ({} line(s))", player, lines.size());
     }
 
     private static void onReset(Any message) throws Exception {
@@ -92,6 +92,6 @@ public final class NametagModule {
 
     private static void onResetAll(Any message) {
         NametagState.resetAll();
-        Artemis.LOGGER.info("[Nametag] reset complet");
+        Artemis.LOGGER.info("[Nametag] reset all");
     }
 }

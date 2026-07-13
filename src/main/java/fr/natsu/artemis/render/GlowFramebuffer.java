@@ -6,8 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.shader.Framebuffer;
 
 /**
- * Framebuffer dédié dans lequel les silhouettes des joueurs en surbrillance sont rendues, avant
- * traitement par {@link OutlineShader}. Wrapper léger autour du {@link Framebuffer} vanilla.
+ * Dedicated framebuffer the glowing players' silhouettes are rendered into, before {@link OutlineShader}
+ * processes them. A thin wrapper around the vanilla {@link Framebuffer}.
  */
 public final class GlowFramebuffer {
 
@@ -20,7 +20,7 @@ public final class GlowFramebuffer {
     }
 
     public void bindFramebuffer() {
-        // false : on gère le viewport manuellement pour coller à la taille du FBO.
+        // false: we set the viewport ourselves to match the FBO size.
         this.framebuffer.bindFramebuffer(false);
         GL11.glViewport(0, 0, this.framebuffer.framebufferWidth, this.framebuffer.framebufferHeight);
     }

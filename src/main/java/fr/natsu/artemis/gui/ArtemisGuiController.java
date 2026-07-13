@@ -6,9 +6,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 /**
- * Ouvre les écrans Artemis en dehors du flux de traitement des commandes : une commande pose une
- * demande d'ouverture, réalisée au tick suivant. Cela évite que le chat, en se refermant après
- * l'exécution de la commande, n'écrase l'écran ouvert.
+ * Opens the Artemis screens outside of the command-processing flow: a command sets an open request,
+ * carried out on the next tick. This keeps the chat, which closes right after the command runs, from
+ * overwriting the screen we just opened.
  */
 public final class ArtemisGuiController {
 
@@ -24,7 +24,7 @@ public final class ArtemisGuiController {
             return;
         }
         openConfigRequested = false;
-        Artemis.LOGGER.info("[Config] ouverture de l'ecran de configuration");
+        Artemis.LOGGER.info("[Config] opening the configuration screen");
         Minecraft.getMinecraft().displayGuiScreen(new GuiHudConfig());
     }
 }

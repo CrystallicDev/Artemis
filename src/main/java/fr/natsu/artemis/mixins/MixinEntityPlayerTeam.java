@@ -12,10 +12,10 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 
 /**
- * Pendant la passe d'outline, fournit une équipe « placeholder » aux joueurs qui n'en ont pas, afin
- * que {@code setScoreTeamColor} (et donc l'injection de couleur) s'exécute. Sans équipe, le rendu
- * d'outline vanilla saute la coloration. Gate strictement sur la passe d'outline pour ne rien
- * changer au jeu en temps normal.
+ * During the outline pass, hands a placeholder team to players that don't have one, so that
+ * {@code setScoreTeamColor} (and therefore our color injection) runs. Without a team the vanilla
+ * outline render skips coloring. Strictly gated on the outline pass so nothing changes during normal
+ * play.
  */
 @Mixin(EntityPlayer.class)
 public abstract class MixinEntityPlayerTeam {

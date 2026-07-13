@@ -6,7 +6,7 @@ import fr.natsu.artemis.Artemis;
 import fr.natsu.artemis.gui.ArtemisGuiController;
 
 /**
- * Commande client {@code /artemis} : ouvre l'écran de configuration d'Artemis.
+ * Client command {@code /artemis}: opens the Artemis configuration screen.
  */
 public final class ArtemisCommand extends CommandBase {
 
@@ -17,7 +17,7 @@ public final class ArtemisCommand extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "/artemis - ouvre l'ecran de configuration";
+        return "/artemis - opens the configuration screen";
     }
 
     @Override
@@ -32,7 +32,7 @@ public final class ArtemisCommand extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        Artemis.LOGGER.info("[Config] commande /artemis recue");
+        Artemis.LOGGER.info("[Config] /artemis command received");
         ArtemisGuiController.requestOpenConfig();
     }
 }

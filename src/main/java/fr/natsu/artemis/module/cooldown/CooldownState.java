@@ -9,14 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.item.ItemStack;
 
 /**
- * Source de vérité du module Cooldown : les cooldowns actifs, indexés par leur nom.
+ * Source of truth for the Cooldown module: the active cooldowns, keyed by their name.
  *
- * <p>Écrit depuis le thread réseau ({@link CooldownModule}), lu et purgé depuis le thread de rendu
+ * <p>Written from the network thread ({@link CooldownModule}), read and purged from the render thread
  * ({@code CooldownRenderer}).</p>
  */
 public final class CooldownState {
 
-    /** Un cooldown en cours d'affichage. */
+    /** A cooldown currently being shown. */
     public static final class Entry {
         public final String name;
         public final long startMillis;
@@ -44,7 +44,7 @@ public final class CooldownState {
             return Math.max(0L, this.durationMillis - elapsed);
         }
 
-        /** Fraction restante dans [0,1]. */
+        /** Remaining fraction in [0,1]. */
         public float remainingFraction() {
             if (this.durationMillis <= 0L) {
                 return 0F;
@@ -76,7 +76,7 @@ public final class CooldownState {
         COOLDOWNS.clear();
     }
 
-    /** Renvoie les cooldowns encore actifs, en purgeant au passage ceux expirés. */
+    /** Returns the still-active cooldowns, purging the expired ones along the way. */
     public static List<Entry> active() {
         List<Entry> result = new ArrayList<>();
         Iterator<Map.Entry<String, Entry>> it = COOLDOWNS.entrySet().iterator();

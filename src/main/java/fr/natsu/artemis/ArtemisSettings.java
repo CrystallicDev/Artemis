@@ -1,16 +1,16 @@
 package fr.natsu.artemis;
 
 /**
- * Réglages runtime partagés entre les modules Artemis.
+ * Runtime settings shared across the Artemis modules.
  */
 public final class ArtemisSettings {
 
     /**
-     * Si vrai, les effets Apollo ciblant le client local (glow, nametag, ...) s'affichent aussi sur
-     * le joueur lui-même. Pratique pour tester sans deuxième compte.
+     * When true, Apollo effects that target the local client (glow, nametag, ...) also show up on the
+     * player themselves. Handy for testing without a second account.
      *
-     * <p>NB : en vue 1ʳᵉ personne, le modèle du joueur n'est pas rendu normalement — le self-glow
-     * n'est donc réellement visible qu'en vue 3ᵉ personne (F5).</p>
+     * <p>Note: in first-person view the player model isn't rendered normally, so the self-glow is only
+     * actually visible in third-person view (F5).</p>
      */
     public static boolean renderSelf = true;
 

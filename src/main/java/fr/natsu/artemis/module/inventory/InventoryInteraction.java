@@ -10,10 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Module Inventory de Lunar : le serveur tague des items via NBT ({@code tag.lunar.*}) pour piloter
- * l'interaction côté client dans les GUIs.
+ * Lunar's Inventory module: the server tags items with NBT ({@code tag.lunar.*}) to drive client-side
+ * interaction inside GUIs.
  *
- * <p>Clés supportées : {@code unclickable} (bool), {@code openUrl} (string), {@code runCommand}
+ * <p>Supported keys: {@code unclickable} (bool), {@code openUrl} (string), {@code runCommand}
  * (string), {@code suggestCommand} (string), {@code copyToClipboard} (string),
  * {@code hideItemTooltip} (bool), {@code hideSlotHighlight} (bool).</p>
  */
@@ -43,9 +43,9 @@ public final class InventoryInteraction {
     }
 
     /**
-     * Exécute l'action de clic associée à l'item, si présente.
+     * Runs the click action bound to the item, if any.
      *
-     * @return {@code true} si le clic vanilla doit être annulé (action déclenchée ou item non-cliquable)
+     * @return {@code true} if the vanilla click should be cancelled (an action fired or the item is unclickable)
      */
     public static boolean handleClick(ItemStack stack) {
         NBTTagCompound lunar = lunar(stack);
@@ -76,7 +76,7 @@ public final class InventoryInteraction {
         return acted || lunar.getBoolean("unclickable");
     }
 
-    /** Ouvre une URL en respectant le réglage de confidentialité « chat links ». */
+    /** Opens a URL, honoring the "chat links" privacy setting. */
     private static void openUrl(Minecraft mc, String url) {
         if (!mc.gameSettings.chatLinks) {
             return;
@@ -91,7 +91,7 @@ public final class InventoryInteraction {
             Object instance = desktop.getMethod("getDesktop").invoke(null);
             desktop.getMethod("browse", URI.class).invoke(instance, uri);
         } catch (Throwable t) {
-            Artemis.LOGGER.warn("[Inventory] ouverture d'URL impossible : {}", t.toString());
+            Artemis.LOGGER.warn("[Inventory] could not open URL: {}", t.toString());
         }
     }
 }

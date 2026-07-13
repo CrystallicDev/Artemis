@@ -11,20 +11,20 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module Glow : traduit les messages {@code com.lunarclient.apollo.glow.v1.*} en mises à jour de
- * {@link GlowState}. Le rendu est assuré séparément par {@code GlowRenderer}.
+ * Glow module: turns the {@code com.lunarclient.apollo.glow.v1.*} messages into {@link GlowState}
+ * updates. The rendering is handled separately by {@code GlowRenderer}.
  *
- * <p>Messages gérés :</p>
+ * <p>Handled messages:</p>
  * <ul>
- *   <li>{@code OverrideGlowEffectMessage} : {@code player_uuid} (#1), {@code color} (#2, optionnel)</li>
- *   <li>{@code ResetGlowEffectMessage} : {@code player_uuid} (#1)</li>
- *   <li>{@code ResetGlowEffectsMessage} : vide (réinitialise tout)</li>
+ *   <li>{@code OverrideGlowEffectMessage}: {@code player_uuid} (#1), {@code color} (#2, optional)</li>
+ *   <li>{@code ResetGlowEffectMessage}: {@code player_uuid} (#1)</li>
+ *   <li>{@code ResetGlowEffectsMessage}: empty (resets everything)</li>
  * </ul>
  */
 public final class GlowModule {
 
-    // NB : le type_url protobuf utilise le package *proto* (lunarclient.apollo.*),
-    // PAS le package Java (com.lunarclient.apollo.*).
+    // Note: the protobuf type_url uses the *proto* package (lunarclient.apollo.*),
+    // NOT the Java package (com.lunarclient.apollo.*).
     private static final String OVERRIDE = "lunarclient.apollo.glow.v1.OverrideGlowEffectMessage";
     private static final String RESET = "lunarclient.apollo.glow.v1.ResetGlowEffectMessage";
     private static final String RESET_ALL = "lunarclient.apollo.glow.v1.ResetGlowEffectsMessage";
@@ -32,7 +32,7 @@ public final class GlowModule {
     private GlowModule() {
     }
 
-    /** Enregistre les handlers du module sur la couche réseau. */
+    /** Registers the module's handlers on the network layer. */
     public static void register(ApolloNetwork network) {
         network.register(OVERRIDE, GlowModule::onOverride);
         network.register(RESET, GlowModule::onReset);
@@ -59,8 +59,8 @@ public final class GlowModule {
 
         if (player != null) {
             GlowState.override(player, argb);
-            Artemis.LOGGER.info("[Glow] override {} couleur={}", player,
-                argb == null ? "defaut" : String.format("#%06X", argb & 0xFFFFFF));
+            Artemis.LOGGER.info("[Glow] override {} color={}", player,
+                argb == null ? "default" : String.format("#%06X", argb & 0xFFFFFF));
         }
     }
 
@@ -84,6 +84,6 @@ public final class GlowModule {
 
     private static void onResetAll(Any message) {
         GlowState.resetAll();
-        Artemis.LOGGER.info("[Glow] reset complet");
+        Artemis.LOGGER.info("[Glow] reset all");
     }
 }

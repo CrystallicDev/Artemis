@@ -1,8 +1,8 @@
 package fr.natsu.artemis.gui;
 
 /**
- * Un élément de HUD déplaçable dans l'écran de configuration : sa position (fraction d'écran) est
- * lue/écrite dans la config, et il sait dessiner un aperçu de lui-même.
+ * A HUD element that can be dragged around the config screen: its position (a screen fraction) is
+ * read from / written to the config, and it knows how to draw a preview of itself.
  */
 public abstract class HudElement {
 
@@ -16,11 +16,11 @@ public abstract class HudElement {
 
     public abstract void setY(float value);
 
-    /** Demi-largeur/hauteur de la zone de saisie (drag) autour de l'ancre, en pixels scaled. */
+    /** Half-width/height of the drag hitbox around the anchor, in scaled pixels. */
     public abstract int halfWidth();
 
     public abstract int halfHeight();
 
-    /** Dessine l'aperçu centré sur l'ancre (centerX, centerY). */
+    /** Draws the preview centered on the anchor (centerX, centerY). */
     public abstract void renderPreview(int centerX, int centerY);
 }

@@ -6,14 +6,14 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 
 /**
- * Configuration persistée d'Artemis (fichier {@code config/artemis.properties}).
+ * Persisted Artemis configuration (the {@code config/artemis.properties} file).
  *
- * <p>Positions HUD stockées en fractions de l'écran « scaled » (0..1) pour rester correctes quelle
- * que soit la résolution / le facteur GUI.</p>
+ * <p>HUD positions are stored as fractions of the "scaled" screen (0..1) so they stay correct
+ * whatever the resolution or GUI scale is.</p>
  */
 public final class ArtemisConfig {
 
-    /** Sens de disposition des cooldowns depuis le point d'ancrage. */
+    /** Layout direction of the cooldowns from the anchor point. */
     public enum CooldownDirection {
         RIGHT, LEFT, DOWN, UP;
 
@@ -21,13 +21,13 @@ public final class ArtemisConfig {
             return values()[(ordinal() + 1) % values().length];
         }
 
-        /** Clé de traduction du nom de la direction. */
+        /** Translation key for the direction's name. */
         public String translationKey() {
             return "artemis.direction." + name().toLowerCase();
         }
     }
 
-    /** Position (ancre) du HUD des cooldowns, en fraction de l'écran. */
+    /** Cooldown HUD anchor position, as a fraction of the screen. */
     public static float cooldownX = 0.5F;
     public static float cooldownY = 0.72F;
     public static CooldownDirection cooldownDirection = CooldownDirection.RIGHT;
@@ -53,7 +53,7 @@ public final class ArtemisConfig {
         try (FileInputStream in = new FileInputStream(file)) {
             properties.load(in);
         } catch (Exception e) {
-            Artemis.LOGGER.warn("[Config] lecture impossible : {}", e.toString());
+            Artemis.LOGGER.warn("[Config] could not read: {}", e.toString());
             return;
         }
         cooldownX = readFloat(properties, "cooldownX", cooldownX);
@@ -72,7 +72,7 @@ public final class ArtemisConfig {
         try (FileOutputStream out = new FileOutputStream(file)) {
             properties.store(out, "Artemis configuration");
         } catch (Exception e) {
-            Artemis.LOGGER.warn("[Config] ecriture impossible : {}", e.toString());
+            Artemis.LOGGER.warn("[Config] could not write: {}", e.toString());
         }
     }
 
