@@ -17,12 +17,12 @@ import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 
 /**
- * Glint d'enchantement coloré par item (convention {@code lunar.glint}), indépendant du chemin de
- * rendu (compatible OptiFine, qui court-circuite {@code renderEffect}).
+ * Per-item colored enchantment glint (the {@code lunar.glint} convention), independent of the render
+ * path (works under OptiFine, which bypasses {@code renderEffect}).
  *
- * <p>On rend notre propre glint <b>après</b> le modèle, dans {@code renderItem(ItemStack, IBakedModel)},
- * en reproduisant la transform locale du modèle. L'item n'a pas besoin d'être réellement enchanté :
- * la seule NBT {@code lunar.glint} suffit à déclencher le glint coloré.</p>
+ * <p>We draw our own glint <b>after</b> the model, inside {@code renderItem(ItemStack, IBakedModel)},
+ * reproducing the model's local transform. The item doesn't need to be actually enchanted: the
+ * {@code lunar.glint} NBT alone is enough to trigger the colored glint.</p>
  */
 @Mixin(RenderItem.class)
 public abstract class MixinRenderItem {
@@ -40,7 +40,7 @@ public abstract class MixinRenderItem {
 
         int argb = GlintState.glintArgb(stack);
 
-        // Reproduit la transform locale appliquée au modèle par renderItem (scale 0.5, translate -0.5).
+        // Reproduce the local transform renderItem applies to the model (scale 0.5, translate -0.5).
         GlStateManager.pushMatrix();
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         GlStateManager.translate(-0.5F, -0.5F, -0.5F);
@@ -48,7 +48,7 @@ public abstract class MixinRenderItem {
         GlStateManager.popMatrix();
     }
 
-    /** Réplique la structure du {@code renderEffect} vanilla, mais avec la texture alpha + couleur. */
+    /** Mirrors the structure of vanilla {@code renderEffect}, but with the alpha texture + color. */
     private void artemis$renderColoredGlint(IBakedModel model, int argb) {
         GlStateManager.depthMask(false);
         GlStateManager.depthFunc(514);

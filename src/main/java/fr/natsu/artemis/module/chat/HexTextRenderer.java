@@ -3,9 +3,9 @@ package fr.natsu.artemis.module.chat;
 import net.minecraft.client.gui.FontRenderer;
 
 /**
- * Dessine une chaîne de chat en supportant les couleurs hex encodées au format 1.16
- * ({@code §x§r§r§g§g§b§b}) en plus des codes § classiques. Utilisé pour rendre les lignes du chat
- * vanilla (les messages normaux passent aussi par ici, rendus à l'identique).
+ * Draws a string with support for 1.16-format hex colors ({@code §x§r§r§g§g§b§b}) on top of the
+ * classic § codes. Called from the font-renderer hook, so normal text goes through here too and is
+ * rendered identically.
  */
 public final class HexTextRenderer {
 
@@ -19,7 +19,7 @@ public final class HexTextRenderer {
     private HexTextRenderer() {
     }
 
-    /** Construit le préfixe hex {@code §x§r§r§g§g§b§b} pour une couleur RGB. */
+    /** Builds the {@code §x§r§r§g§g§b§b} hex prefix for an RGB color. */
     public static String hexPrefix(int rgb) {
         String hex = String.format("%06x", rgb & 0xFFFFFF);
         StringBuilder sb = new StringBuilder(14);
@@ -31,24 +31,24 @@ public final class HexTextRenderer {
     }
 
     /**
-     * Dessine {@code text} avec ombre à partir de (x, y), en interprétant {@code §x} (hex) et les
-     * codes § standards. Renvoie la position X finale.
+     * Draws {@code text} with a shadow from (x, y), interpreting {@code §x} (hex) and the standard §
+     * codes. Returns the final X position.
      */
     public static int drawWithShadow(FontRenderer font, String text, float x, float y, int defaultColor) {
         return draw(font, text, x, y, defaultColor, true);
     }
 
     /**
-     * Dessine {@code text} sans ombre à partir de (x, y), en interprétant {@code §x} (hex) et les
-     * codes § standards. Renvoie la position X finale.
+     * Draws {@code text} without a shadow from (x, y), interpreting {@code §x} (hex) and the standard §
+     * codes. Returns the final X position.
      */
     public static int draw(FontRenderer font, String text, float x, float y, int defaultColor) {
         return draw(font, text, x, y, defaultColor, false);
     }
 
     /**
-     * Dessine {@code text} à partir de (x, y), en interprétant {@code §x} (hex) et les codes §
-     * standards. {@code shadow} active l'ombre portée. Renvoie la position X finale.
+     * Draws {@code text} from (x, y), interpreting {@code §x} (hex) and the standard § codes.
+     * {@code shadow} enables the drop shadow. Returns the final X position.
      */
     public static int draw(FontRenderer font, String text, float x, float y, int defaultColor, boolean shadow) {
         int alpha = (defaultColor >>> 24) & 0xFF;
@@ -75,7 +75,7 @@ public final class HexTextRenderer {
                     if (rgb >= 0) {
                         color = rgb;
                         bold = italic = underline = strike = obfuscated = false;
-                        i += 1 + 12; // saute §x + 6 paires
+                        i += 1 + 12; // skip §x and the 6 pairs
                         continue;
                     }
                     i++;
@@ -133,7 +133,7 @@ public final class HexTextRenderer {
         return (int) cursorX;
     }
 
-    /** Lit 6 paires {@code §<hexdigit>} à partir de {@code start}, ou {@code -1} si invalide. */
+    /** Reads 6 {@code §<hexdigit>} pairs starting at {@code start}, or {@code -1} if invalid. */
     private static int readHex(String text, int start) {
         int rgb = 0;
         for (int k = 0; k < 6; k++) {

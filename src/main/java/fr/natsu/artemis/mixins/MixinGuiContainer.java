@@ -16,8 +16,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Slot;
 
 /**
- * Module Inventory (interaction) : dans un GUI de conteneur, gère les items tagués {@code lunar.*} —
- * annule le clic (action déclenchée / non-cliquable) et cache le surlignage de slot demandé.
+ * Inventory (interaction) module: inside a container GUI, handles items tagged {@code lunar.*}. It
+ * cancels the click (action fired / unclickable) and hides the slot highlight when asked.
  */
 @Mixin(GuiContainer.class)
 public abstract class MixinGuiContainer {
@@ -45,7 +45,7 @@ public abstract class MixinGuiContainer {
         drawGradient(left, top, right, bottom, startColor, endColor);
     }
 
-    /** Copie du {@code Gui.drawGradientRect} vanilla (le highlight de slot), z = 0. */
+    /** Copy of vanilla {@code Gui.drawGradientRect} (the slot highlight), z = 0. */
     private static void drawGradient(int left, int top, int right, int bottom, int startColor, int endColor) {
         float sa = (startColor >> 24 & 255) / 255.0F;
         float sr = (startColor >> 16 & 255) / 255.0F;

@@ -13,9 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Programme GLSL appliqué au framebuffer de silhouettes pour en extraire un contour (Sobel + FXAA).
+ * GLSL program applied to the silhouette framebuffer to extract an outline (Sobel + FXAA).
  *
- * <p>Adapté du shader d'Eterion. Les sources sont chargées depuis
+ * <p>Adapted from Eterion's shader. The sources are loaded from
  * {@code assets/artemis/shaders/program/}.</p>
  */
 public final class OutlineShader {
@@ -37,7 +37,7 @@ public final class OutlineShader {
         GL20.glLinkProgram(this.programId);
 
         if (GL20.glGetProgrami(this.programId, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
-            throw new IOException("Echec du link du programme shader: "
+            throw new IOException("Shader program link failed: "
                 + GL20.glGetProgramInfoLog(this.programId, 1024));
         }
     }
@@ -56,7 +56,7 @@ public final class OutlineShader {
         GL20.glCompileShader(shaderId);
 
         if (GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            throw new IOException("Echec de compilation du shader: "
+            throw new IOException("Shader compilation failed: "
                 + GL20.glGetShaderInfoLog(shaderId, 1024));
         }
         return shaderId;

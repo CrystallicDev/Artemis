@@ -14,8 +14,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Rend la vignette Apollo : un quad plein écran texturé, teinté {@code (1,1,1,opacity)} en blend alpha
- * normal (l'alpha de la texture est respecté, {@code opacity} module la force de l'overlay).
+ * Draws the Apollo vignette: a full-screen textured quad, tinted {@code (1,1,1,opacity)} with normal
+ * alpha blending (the texture's alpha is kept, {@code opacity} controls how strong the overlay is).
  */
 public final class VignetteRenderer {
 

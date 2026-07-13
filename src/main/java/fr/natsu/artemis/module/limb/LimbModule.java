@@ -12,10 +12,10 @@ import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.net.ApolloProtos;
 
 /**
- * Module Limb : traduit {@code lunarclient.apollo.limb.v1.*} en masque de parties cachées dans
- * {@link LimbState}. Le rendu (parties non dessinées) est fait par {@code MixinModelPlayer}.
+ * Limb module: turns {@code lunarclient.apollo.limb.v1.*} into a hidden-parts mask in
+ * {@link LimbState}. The rendering (parts not drawn) is done by {@code MixinModelPlayer}.
  *
- * <p>{@code HideBodyPartMessage} / {@code ResetBodyPartMessage} : player_uuid(#1),
+ * <p>{@code HideBodyPartMessage} / {@code ResetBodyPartMessage}: player_uuid(#1),
  * body_parts(#2 repeated enum {@code BodyPart}, packed).</p>
  */
 public final class LimbModule {
@@ -71,7 +71,7 @@ public final class LimbModule {
         }
     }
 
-    /** Parse player_uuid(#1) + body_parts(#2 packed enum) -> [uuidHigh, uuidLow, mask, hasUuid]. */
+    /** Parses player_uuid(#1) + body_parts(#2 packed enum) -> [uuidHigh, uuidLow, mask, hasUuid]. */
     private static long[] parse(Any message) throws Exception {
         CodedInputStream in = message.getValue().newCodedInput();
         UUID player = null;

@@ -12,13 +12,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Masque des parties du corps d'un joueur (module Limb) : avant le rendu du modèle, on désactive
- * {@code showModel} des parties cachées (base + couche « wear »), puis on restaure après.
+ * Hides a player's body parts (Limb module): before the model is drawn we turn off {@code showModel}
+ * on the hidden parts (base + "wear" layer), then restore it afterwards.
  */
 @Mixin(ModelPlayer.class)
 public class MixinModelPlayer {
 
-    /** {@code showModel} d'origine des 12 parties, sauvegardé le temps du rendu. */
+    /** Original {@code showModel} of the 12 parts, saved for the duration of the render. */
     private static boolean[] artemis$saved;
 
     @Inject(method = "render", at = @At("HEAD"), require = 0)
@@ -67,7 +67,7 @@ public class MixinModelPlayer {
         }
     }
 
-    /** Les 12 parties : base + couche wear, dans l'ordre head/torso/bras G/D/jambes G/D. */
+    /** The 12 parts: base + wear layer, in head/torso/arms L,R/legs L,R order. */
     private ModelRenderer[] parts() {
         ModelPlayer model = (ModelPlayer) (Object) this;
         return new ModelRenderer[] {
