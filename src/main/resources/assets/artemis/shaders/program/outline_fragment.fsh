@@ -32,7 +32,7 @@ void main() {
     float gy = -lumTL - 2.0*lumT - lumTR + lumBL + 2.0*lumB + lumBR;
     float edge = sqrt(gx*gx + gy*gy);
 
-    // Contours plus fins et doux
+    // Depserate attempt at thinder outlines.
     float alpha = smoothstep(0.15, 0.4, edge);
     alpha = pow(alpha, 0.85);
 
@@ -42,7 +42,6 @@ void main() {
     float lumaMax = max(lumC, max(max(max(lumTL, lumT), max(lumTR, lumL)), max(max(lumR, lumBL), max(lumB, lumBR))));
     float lumaRange = lumaMax - lumaMin;
 
-    // Si peu de contraste, pas besoin de FXAA
     if (lumaRange < 0.1) {
         gl_FragColor = baseColor;
         return;
@@ -59,9 +58,6 @@ void main() {
     vec4 result1 = texture2D(texture, safeUV + dir * (1.0 / 3.0 - 0.5));
     vec4 result2 = texture2D(texture, safeUV + dir * (2.0 / 3.0 - 0.5));
     vec4 fxaaColor = (result1 + result2) * 0.5;
-
-
-    // On pondère le mix selon l’alpha du contour pour éviter les noirs durs
     gl_FragColor = vec4(mix(fxaaColor.rgb, baseColor.rgb, baseColor.a * 0.6), baseColor.a);
 }
 
