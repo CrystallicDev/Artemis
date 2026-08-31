@@ -96,6 +96,6 @@ jar {
 task archiveBuild(type: Copy) {
     from "$buildDir/libs/${archivesBaseName}-${version}.jar"
     into "$projectDir/../CustomMods/builds"
-    rename { "${archivesBaseName}-${minecraft_version}-${version}.jar" }
+    rename { "${archivesBaseName}-${minecraft_version}-${version}-mod.jar" }
 }
 build.finalizedBy archiveBuild
