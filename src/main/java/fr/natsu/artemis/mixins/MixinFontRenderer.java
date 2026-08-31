@@ -6,25 +6,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.natsu.artemis.module.chat.HexTextRenderer;
+import fr.natsu.artemis.module.icon.IconTextRenderer;
 import net.minecraft.client.gui.FontRenderer;
 
-/**
- * Native support for hex colors ({@code §x§r§r§g§g§b§b}) in the {@code FontRenderer}, so they work
- * everywhere text is drawn (tab, nametag, sidebar, chat, items, holograms...) whatever the caller is,
- * including OptiFine and third-party mods like OldAnimations that redraw the tab in 1.7.10 style. This
- * is the one universal choke point: every public draw method
- * ({@code drawString}/{@code drawStringWithShadow}) funnels into
- * {@code drawString(String, float, float, int, boolean)}.
- *
- * <ul>
- *   <li>{@link #artemis$hexDraw}: intercepts that funnel; if the string contains {@code §x} it is
- *       drawn by {@link HexTextRenderer} (RGB color resolved per glyph) and the vanilla render is
- *       cancelled. Otherwise no impact (vanilla/OptiFine handles it). No recursion: the glyphs
- *       redrawn by {@link HexTextRenderer} no longer contain {@code §x}.</li>
- *   <li>{@link #artemis$hexFormat}: keeps {@code §x} alive across chat line wrapping, whose wrapping
- *       carries the formatting over via {@code getFormatFromString} (which doesn't know {@code §x}).</li>
- * </ul>
- */
 @Mixin(FontRenderer.class)
 public class MixinFontRenderer {
 
@@ -35,11 +19,25 @@ public class MixinFontRenderer {
         at = @At("HEAD"), cancellable = true, require = 0)
     private void artemis$hexDraw(String text, float x, float y, int color, boolean dropShadow,
             CallbackInfoReturnable<Integer> cir) {
-        if (text == null || !containsHex(text)) {
+        if (text == null) {
             return;
         }
         FontRenderer self = (FontRenderer) (Object) this;
-        cir.setReturnValue(HexTextRenderer.draw(self, text, x, y, color, dropShadow));
+        if (IconTextRenderer.contains(text)) {
+            cir.setReturnValue(IconTextRenderer.draw(self, text, x, y, color, dropShadow));
+            return;
+        }
+        if (containsHex(text)) {
+            cir.setReturnValue(HexTextRenderer.draw(self, text, x, y, color, dropShadow));
+        }
+    }
+
+    @Inject(method = "getStringWidth", at = @At("HEAD"), cancellable = true, require = 0)
+    private void artemis$iconWidth(String text, CallbackInfoReturnable<Integer> cir) {
+        if (text == null || !IconTextRenderer.contains(text)) {
+            return;
+        }
+        cir.setReturnValue(IconTextRenderer.width((FontRenderer) (Object) this, text));
     }
 
     private static boolean containsHex(String text) {

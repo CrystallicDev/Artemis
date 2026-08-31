@@ -53,6 +53,7 @@ public final class JemParser {
         JemPart part = new JemPart();
         part.id = string(element, "id", "");
         part.scale = number(element, "scale", 1.0F);
+        part.visible = bool(element, "visible", true);
 
         ResourceLocation texture = resolveTexture(string(element, "texture", null), basePath);
         if (texture != null) {

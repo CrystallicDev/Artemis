@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import fr.natsu.artemis.module.glint.GlintState;
+import fr.natsu.artemis.module.model.ModelRegistry;
+import fr.natsu.artemis.render.JemItemRenderer;
+import fr.natsu.artemis.module.model.ModelRegistry;
 import fr.natsu.artemis.module.glint.GlintTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,14 +19,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 
-/**
- * Per-item colored enchantment glint (the {@code lunar.glint} convention), independent of the render
- * path (works under OptiFine, which bypasses {@code renderEffect}).
- *
- * <p>We draw our own glint <b>after</b> the model, inside {@code renderItem(ItemStack, IBakedModel)},
- * reproducing the model's local transform. The item doesn't need to be actually enchanted: the
- * {@code lunar.glint} NBT alone is enough to trigger the colored glint.</p>
- */
 @Mixin(RenderItem.class)
 public abstract class MixinRenderItem {
 
@@ -32,9 +27,21 @@ public abstract class MixinRenderItem {
 
     @Inject(
         method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V",
+        at = @At("HEAD"), cancellable = true, require = 0)
+    private void artemis$customItemModel(ItemStack stack, IBakedModel model, CallbackInfo ci) {
+        if (stack != null && ModelRegistry.hasItems() && JemItemRenderer.renderHeld(stack)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(
+        method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/resources/model/IBakedModel;)V",
         at = @At("RETURN"))
     private void artemis$coloredGlint(ItemStack stack, IBakedModel model, CallbackInfo ci) {
         if (model == null || model.isBuiltInRenderer() || !GlintState.hasGlint(stack)) {
+            return;
+        }
+        if (ModelRegistry.findForItem(stack) != null) {
             return;
         }
 

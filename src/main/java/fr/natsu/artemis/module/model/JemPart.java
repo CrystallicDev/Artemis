@@ -31,6 +31,10 @@ public final class JemPart {
     public float animRotateY;
     public float animRotateZ;
     public boolean hidden;
+    public boolean visible = true;
+    public float animScaleX = 1.0F;
+    public float animScaleY = 1.0F;
+    public float animScaleZ = 1.0F;
 
     public ResourceLocation texture;
 
@@ -59,6 +63,9 @@ public final class JemPart {
         this.animRotateY = 0.0F;
         this.animRotateZ = 0.0F;
         this.hidden = false;
+        this.animScaleX = 1.0F;
+        this.animScaleY = 1.0F;
+        this.animScaleZ = 1.0F;
         for (JemPart child : this.children) {
             child.resetAnimation();
         }
@@ -78,7 +85,7 @@ public final class JemPart {
     }
 
     public void render() {
-        if (this.hidden) {
+        if (this.hidden || !this.visible) {
             return;
         }
 
@@ -99,8 +106,11 @@ public final class JemPart {
         if (rx != 0.0F) {
             GL11.glRotatef(rx * RAD_TO_DEG, 1.0F, 0.0F, 0.0F);
         }
-        if (this.scale != 1.0F) {
-            GL11.glScalef(this.scale, this.scale, this.scale);
+        float scaleX = this.scale * this.animScaleX;
+        float scaleY = this.scale * this.animScaleY;
+        float scaleZ = this.scale * this.animScaleZ;
+        if (scaleX != 1.0F || scaleY != 1.0F || scaleZ != 1.0F) {
+            GL11.glScalef(scaleX, scaleY, scaleZ);
         }
 
         if (!this.boxes.isEmpty()) {

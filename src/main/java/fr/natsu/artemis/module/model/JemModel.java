@@ -1,7 +1,9 @@
 package fr.natsu.artemis.module.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,9 +17,39 @@ public final class JemModel {
     public float shadowSize = 1.0F;
 
     private final List<JemPart> parts = new ArrayList<>();
+    private Map<String, JemPart> index;
 
     public void addPart(JemPart part) {
         this.parts.add(part);
+        this.index = null;
+    }
+
+    public JemPart resolve(String boneName) {
+        if (this.index == null) {
+            this.index = new HashMap<>();
+            for (JemPart part : this.parts) {
+                indexPart(part);
+            }
+        }
+        return this.index.get(boneName);
+    }
+
+    private void indexPart(JemPart part) {
+        if (part.id != null && !part.id.isEmpty()) {
+            if (!this.index.containsKey(part.id)) {
+                this.index.put(part.id, part);
+            }
+            int underscore = part.id.indexOf('_');
+            if (underscore > 0 && underscore + 1 < part.id.length()) {
+                String stripped = part.id.substring(underscore + 1);
+                if (!this.index.containsKey(stripped)) {
+                    this.index.put(stripped, part);
+                }
+            }
+        }
+        for (JemPart child : part.getChildren()) {
+            indexPart(child);
+        }
     }
 
     public List<JemPart> getParts() {

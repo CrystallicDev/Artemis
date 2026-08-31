@@ -13,8 +13,10 @@ import fr.natsu.artemis.module.hologram.HologramModule;
 import fr.natsu.artemis.module.nametag.NametagModule;
 import fr.natsu.artemis.module.coloredfire.ColoredFireModule;
 import fr.natsu.artemis.module.events.ArtemisEvents;
+import fr.natsu.artemis.module.icon.IconRegistry;
 import fr.natsu.artemis.module.limb.LimbModule;
 import fr.natsu.artemis.module.marker.MarkerModule;
+import fr.natsu.artemis.module.model.ModelRegistry;
 import fr.natsu.artemis.module.notification.NotificationModule;
 import fr.natsu.artemis.module.team.TeamModule;
 import fr.natsu.artemis.module.vignette.VignetteModule;
@@ -22,7 +24,9 @@ import fr.natsu.artemis.module.waypoint.WaypointModule;
 import fr.natsu.artemis.net.ApolloNetwork;
 import fr.natsu.artemis.render.BeamRenderer;
 import fr.natsu.artemis.render.BorderRenderer;
+import fr.natsu.artemis.render.BossBarRenderer;
 import fr.natsu.artemis.render.CooldownRenderer;
+import fr.natsu.artemis.render.CustomModelRenderer;
 import fr.natsu.artemis.render.GlowOverlayListener;
 import fr.natsu.artemis.render.HologramRenderer;
 import fr.natsu.artemis.render.LightningRenderer;
@@ -98,6 +102,11 @@ public final class Artemis {
         HologramModule.register(network);
         MinecraftForge.EVENT_BUS.register(new HologramRenderer());
 
+        ModelRegistry.init();
+        IconRegistry.init();
+        MinecraftForge.EVENT_BUS.register(new CustomModelRenderer());
+        MinecraftForge.EVENT_BUS.register(new BossBarRenderer());
+
         ColoredFireModule.register(network);
 
         LimbModule.register(network);
@@ -109,7 +118,7 @@ public final class Artemis {
         ClientCommandHandler.instance.registerCommand(new ArtemisCommand());
         MinecraftForge.EVENT_BUS.register(new ArtemisGuiController());
 
-        LOGGER.info("[Artemis] init - Apollo network + Glow/Nametag/Cooldown/Vignette/TeamView/Waypoint/Marker/Beam/Notification/Border/Hologram modules active");
+        LOGGER.info("[Artemis] init - Apollo network + Glow/Nametag/Cooldown/Vignette/TeamView/Waypoint/Marker/Beam/Notification/Border/Hologram/Model modules active");
     }
 
     @Mod.EventHandler

@@ -1,6 +1,8 @@
 package fr.natsu.artemis.render;
 
+import fr.natsu.artemis.module.model.JemAnimation;
 import fr.natsu.artemis.module.model.JemModel;
+import fr.natsu.artemis.module.model.ModelAnimator;
 import fr.natsu.artemis.module.model.ModelRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,7 +27,11 @@ public final class CustomModelRenderer {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || ModelRegistry.isEmpty()) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        ModelRegistry.ensureLoaded();
+        if (ModelRegistry.isEmpty()) {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
@@ -72,6 +78,12 @@ public final class CustomModelRenderer {
         }
 
         event.setCanceled(true);
+
+        model.resetAnimation();
+        JemAnimation animation = ModelRegistry.getAnimation(entry);
+        if (animation != null) {
+            ModelAnimator.apply(model, animation, (entity.ticksExisted + partialTicks) / 20.0D);
+        }
         render(entity, model, entry.scale, event.x, event.y, event.z);
     }
 
@@ -90,7 +102,6 @@ public final class CustomModelRenderer {
         }
         GlStateManager.translate(0.0F, MODEL_OFFSET_Y, 0.0F);
 
-        model.resetAnimation();
         model.render();
 
         GlStateManager.disableRescaleNormal();
