@@ -7,8 +7,9 @@ import org.lwjgl.opengl.GL11;
 import fr.natsu.artemis.module.hologram.HologramState;
 import fr.natsu.artemis.module.nametag.AdventureText.Run;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -29,7 +30,9 @@ public final class HologramRenderer {
             return;
         }
 
-        Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
+        RenderManager renderManager = mc.getRenderManager();
+
+        Vec3 camera = new Vec3(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
         FontRenderer font = mc.fontRendererObj;
 
         for (HologramState.Hologram hologram : HologramState.all()) {
@@ -93,20 +96,20 @@ public final class HologramRenderer {
         }
         GL11.glDepthMask(true);
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
     }
 
     private static void drawBackground(int x1, int y1, int x2, int y2) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.25F);
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(0.0F, 0.0F, 0.0F, 0.25F);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x1, y2);
         GL11.glVertex2f(x2, y2);
         GL11.glVertex2f(x2, y1);
         GL11.glVertex2f(x1, y1);
         GL11.glEnd();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

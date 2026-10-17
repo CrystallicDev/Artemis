@@ -188,7 +188,9 @@ public final class GlowRenderer {
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
 
-        GL11.glColor4f(1, 1, 1, 1);
+        // Appel brut volontaire : on est entre glPushAttrib/glPopAttrib. Un GlStateManager.color ici mettrait
+        // son cache a blanc alors que glPopAttrib restaurera l'ancienne couleur GL -> desynchronisation durable.
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glTexCoord2f(0, 1);

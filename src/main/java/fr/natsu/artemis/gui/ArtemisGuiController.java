@@ -24,7 +24,7 @@ public final class ArtemisGuiController {
             return;
         }
         openConfigRequested = false;
-        Artemis.LOGGER.info("[Config] opening the configuration screen");
-        Minecraft.getMinecraft().displayGuiScreen(new GuiHudConfig());
+        Artemis.LOGGER.info("[Config] opening the Artemis menu");
+        Minecraft.getMinecraft().displayGuiScreen(new GuiArtemisMenu());
     }
 }

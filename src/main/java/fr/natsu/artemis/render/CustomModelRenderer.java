@@ -4,6 +4,18 @@ import fr.natsu.artemis.module.model.JemAnimation;
 import fr.natsu.artemis.module.model.JemModel;
 import fr.natsu.artemis.module.model.ModelAnimator;
 import fr.natsu.artemis.module.model.ModelRegistry;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
+
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.culling.ICamera;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.client.MinecraftForgeClient;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -17,6 +29,59 @@ public final class CustomModelRenderer {
     private static final float DEFAULT_RENDER_DISTANCE = 256.0F;
 
     private static float partialTicks;
+    private static final Map<Entity, Float> RENDER_RANGE = new WeakHashMap<Entity, Float>();
+
+    private static final Set<Entity> RENDERED_FRAME = Collections.newSetFromMap(new WeakHashMap<Entity, Boolean>());
+
+    public static void beginFrame() {
+        if (MinecraftForgeClient.getRenderPass() == 0) {
+            RENDERED_FRAME.clear();
+        }
+    }
+
+    public static void renderMissed(Entity viewer, ICamera camera, float partialTicks) {
+        if (RENDER_RANGE.isEmpty() || MinecraftForgeClient.getRenderPass() != 0) {
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderManager renderManager = mc.getRenderManager();
+        double camX = renderManager.viewerPosX;
+        double camY = renderManager.viewerPosY;
+        double camZ = renderManager.viewerPosZ;
+        Frustum own = null;
+
+        for (Map.Entry<Entity, Float> entry : RENDER_RANGE.entrySet()) {
+            Entity entity = entry.getKey();
+            if (entity == viewer || entity.isDead || RENDERED_FRAME.contains(entity)) {
+                continue;
+            }
+            double dx = entity.posX - camX;
+            double dy = entity.posY - camY;
+            double dz = entity.posZ - camZ;
+            float range = entry.getValue();
+            if (dx * dx + dy * dy + dz * dz >= (double) range * (double) range) {
+                continue;
+            }
+            AxisAlignedBB box = entity.getEntityBoundingBox();
+            boolean cameraFrustum = camera != null && camera.isBoundingBoxInFrustum(box);
+            boolean ownFrustum = cameraFrustum;
+            if (!cameraFrustum && !entity.ignoreFrustumCheck) {
+                if (own == null) {
+                    own = new Frustum();
+                    own.setPosition(camX, camY, camZ);
+                }
+                ownFrustum = own.isBoundingBoxInFrustum(box);
+            }
+            if (!entity.ignoreFrustumCheck && !ownFrustum) {
+                continue;
+            }
+            renderManager.renderEntitySimple(entity, partialTicks);
+        }
+    }
+    public static float renderRange(Entity entity) {
+        Float range = RENDER_RANGE.get(entity);
+        return range == null ? 0.0F : range;
+    }
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {
@@ -38,6 +103,7 @@ public final class CustomModelRenderer {
         if (mc.theWorld == null) {
             return;
         }
+        RENDER_RANGE.clear();
         for (Entity entity : mc.theWorld.loadedEntityList) {
             ModelRegistry.Entry entry = ModelRegistry.findForEntity(entity);
             if (entry == null) {
@@ -50,6 +116,7 @@ public final class CustomModelRenderer {
                 : (entry.ignoreCull ? DEFAULT_RENDER_DISTANCE : 0.0F);
             if (distance > 0.0F) {
                 entity.renderDistanceWeight = renderDistanceWeight(entity, distance);
+                RENDER_RANGE.put(entity, distance);
             }
         }
     }
@@ -78,6 +145,7 @@ public final class CustomModelRenderer {
         }
 
         event.setCanceled(true);
+        RENDERED_FRAME.add(entity);
 
         model.resetAnimation();
         JemAnimation animation = ModelRegistry.getAnimation(entry);

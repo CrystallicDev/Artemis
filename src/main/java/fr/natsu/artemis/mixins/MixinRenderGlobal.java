@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import fr.natsu.artemis.render.CustomModelRenderer;
 import fr.natsu.artemis.render.GlowRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.ICamera;
@@ -19,6 +20,22 @@ import net.minecraft.entity.Entity;
  */
 @Mixin(RenderGlobal.class)
 public abstract class MixinRenderGlobal {
+
+    @Inject(method = "renderEntities", at = @At("HEAD"), require = 0)
+    private void artemis$beginEntityFrame(Entity renderViewEntity, ICamera camera, float partialTicks, CallbackInfo ci) {
+        CustomModelRenderer.beginFrame();
+    }
+
+    @Inject(
+        method = "renderEntities",
+        require = 0,
+        at = @At(
+            value = "INVOKE_STRING",
+            target = "Lnet/minecraft/profiler/Profiler;endStartSection(Ljava/lang/String;)V",
+            args = "ldc=blockentities"))
+    private void artemis$renderMissedEntities(Entity renderViewEntity, ICamera camera, float partialTicks, CallbackInfo ci) {
+        CustomModelRenderer.renderMissed(renderViewEntity, camera, partialTicks);
+    }
 
     @Inject(
         method = "renderEntities",

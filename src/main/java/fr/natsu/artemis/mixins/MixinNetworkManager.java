@@ -42,7 +42,9 @@ public class MixinNetworkManager {
         data.getBytes(data.readerIndex(), bytes);
 
         if (apollo) {
-            ApolloNetwork.getInstance().handleIncoming(bytes);
+            if (!ApolloNetwork.getInstance().handleIncomingIfOwned(bytes)) {
+                return;
+            }
         } else if (chat) {
             ArtemisChat.handleIncoming(bytes);
         } else {

@@ -38,6 +38,11 @@ public final class HexTextRenderer {
     }
 
     public static int draw(FontRenderer font, String text, float x, float y, int defaultColor, boolean shadow) {
+        return draw(font, text, x, y, defaultColor, shadow, false);
+    }
+
+    public static int draw(FontRenderer font, String text, float x, float y, int defaultColor, boolean shadow,
+                           boolean shadowPass) {
         int alpha = (defaultColor >>> 24) & 0xFF;
         if (alpha == 0) {
             alpha = 0xFF;
@@ -109,7 +114,7 @@ public final class HexTextRenderer {
             }
             glyph.append(c);
 
-            int argb = (alpha << 24) | color;
+            int argb = (alpha << 24) | (shadowPass ? (color & 0xFCFCFC) >> 2 : color);
             if (shadow) {
                 font.drawStringWithShadow(glyph.toString(), cursorX, y, argb);
             } else {

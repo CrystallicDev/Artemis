@@ -8,6 +8,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public final class JemModel {
@@ -76,7 +77,7 @@ public final class JemModel {
         if (this.texture != null) {
             Minecraft.getMinecraft().getTextureManager().bindTexture(this.texture);
         }
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         for (JemPart part : this.parts) {
             part.render();
         }

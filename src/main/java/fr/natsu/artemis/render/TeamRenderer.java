@@ -16,7 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,11 +34,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public final class TeamRenderer {
 
-    private static final double MARKER_HEIGHT = 4.5D;
+    private static final double MARKER_HEIGHT = 2.9D;
     private static final int ARROW_HEIGHT = 4;
     private static final int ARROW_THICKNESS = 1;
     private static final float ARROW_SLOPE = 1.0F;
     private static final double DISTANCE_TEXT_THRESHOLD = 50.0D;
+    private static final double AIM_DOT_THRESHOLD = 0.99D;
+    private static final int LABEL_ARGB = 0x78FFFFFF;
 
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent event) {
@@ -52,10 +55,13 @@ public final class TeamRenderer {
         }
 
         Entity viewer = mc.getRenderViewEntity();
-        Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
+        RenderManager renderManager = mc.getRenderManager();
+        Vec3 camera = new Vec3(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        List<int[]> markers = new ArrayList<>();
+        Vec3 eye = viewer.getPositionEyes(event.partialTicks);
+        Vec3 look = viewer.getLook(event.partialTicks);
+        List<Marker> markers = new ArrayList<>();
         for (TeamState.Member member : members) {
             if (member.uuid.equals(mc.thePlayer.getUniqueID())) {
                 continue;
@@ -83,7 +89,11 @@ public final class TeamRenderer {
                     argb |= 0xFF000000;
                 }
                 int distance = (int) Math.round(viewer.getDistance(px, py, pz));
-                markers.add(new int[] {(int) screen[0], (int) screen[1], argb, distance});
+                Vec3 direction = new Vec3(px - eye.xCoord, py + MARKER_HEIGHT - eye.yCoord,
+                    pz - eye.zCoord).normalize();
+                boolean aimed = look.dotProduct(direction) > AIM_DOT_THRESHOLD;
+                markers.add(new Marker((int) screen[0], (int) screen[1], argb, distance,
+                    aimed ? displayName(mc, member.uuid, entity) : null));
             }
         }
 
@@ -93,12 +103,20 @@ public final class TeamRenderer {
 
         setupOverlay(resolution);
         FontRenderer font = mc.fontRendererObj;
-        for (int[] marker : markers) {
-            drawArrow(marker[0], marker[1], marker[2]);
-            if (marker[3] > DISTANCE_TEXT_THRESHOLD) {
-                String label = "(" + marker[3] + "m)";
-                font.drawStringWithShadow(label, marker[0] - font.getStringWidth(label) / 2.0F,
-                    marker[1] + 2.0F, 0xFFFFFFFF);
+        for (Marker marker : markers) {
+            drawArrow(marker.x, marker.y, marker.argb);
+            if (marker.distance > DISTANCE_TEXT_THRESHOLD) {
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                String label = "(" + marker.distance + "m)";
+                float labelY = marker.y + 2.0F;
+                font.drawStringWithShadow(label, marker.x - font.getStringWidth(label) / 2.0F, labelY, LABEL_ARGB);
+                if (marker.name != null) {
+                    font.drawStringWithShadow(marker.name,
+                        marker.x - font.getStringWidth(marker.name) / 2.0F,
+                        labelY + font.FONT_HEIGHT + 1, LABEL_ARGB);
+                }
+                GlStateManager.disableBlend();
             }
         }
         cleanupOverlay();
@@ -114,6 +132,33 @@ public final class TeamRenderer {
             }
         }
         return null;
+    }
+
+    private static final class Marker {
+        final int x;
+        final int y;
+        final int argb;
+        final int distance;
+        final String name;
+
+        Marker(int x, int y, int argb, int distance, String name) {
+            this.x = x;
+            this.y = y;
+            this.argb = argb;
+            this.distance = distance;
+            this.name = name;
+        }
+    }
+
+    private static String displayName(Minecraft mc, UUID uuid, EntityPlayer entity) {
+        if (entity != null) {
+            return entity.getDisplayName().getFormattedText();
+        }
+        if (mc.getNetHandler() == null) {
+            return null;
+        }
+        NetworkPlayerInfo info = mc.getNetHandler().getPlayerInfo(uuid);
+        return info == null ? null : mc.ingameGUI.getTabList().getPlayerName(info);
     }
 
     private static void drawArrow(int cx, int cy, int argb) {

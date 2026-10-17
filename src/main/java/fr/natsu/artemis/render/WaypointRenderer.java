@@ -12,7 +12,7 @@ import fr.natsu.artemis.module.waypoint.WaypointState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -46,7 +46,9 @@ public final class WaypointRenderer {
             return;
         }
 
-        Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
+        RenderManager renderManager = mc.getRenderManager();
+
+        Vec3 camera = new Vec3(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
         ScaledResolution resolution = new ScaledResolution(mc);
 
         List<Object[]> labels = new ArrayList<>();

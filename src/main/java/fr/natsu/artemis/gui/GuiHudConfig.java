@@ -15,6 +15,7 @@ import net.minecraft.client.resources.I18n;
  */
 public final class GuiHudConfig extends GuiScreen {
 
+    private final GuiScreen parent;
     private final List<HudElement> elements = new ArrayList<>();
     private HudElement dragging;
     private int dragOffsetX;
@@ -22,7 +23,8 @@ public final class GuiHudConfig extends GuiScreen {
 
     private GuiButton directionButton;
 
-    public GuiHudConfig() {
+    public GuiHudConfig(GuiScreen parent) {
+        this.parent = parent;
         this.elements.add(cooldownElement());
     }
 
@@ -90,7 +92,7 @@ public final class GuiHudConfig extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 0:
-                this.mc.displayGuiScreen(null);
+                this.mc.displayGuiScreen(this.parent);
                 break;
             case 1:
                 ArtemisConfig.cooldownX = ArtemisConfig.DEFAULT_COOLDOWN_X;

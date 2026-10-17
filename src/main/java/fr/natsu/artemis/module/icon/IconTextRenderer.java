@@ -46,6 +46,14 @@ public final class IconTextRenderer {
     }
 
     public static int draw(FontRenderer font, String text, float x, float y, int color, boolean shadow) {
+        return draw(font, text, x, y, color, shadow, false);
+    }
+
+    public static int draw(FontRenderer font, String text, float x, float y, int color, boolean shadow,
+                           boolean shadowPass) {
+        if (shadowPass) {
+            color = (color & 0xFCFCFC) >> 2 | color & 0xFF000000;
+        }
         if ((color & 0xFC000000) == 0) {
             color |= 0xFF000000;
         }
@@ -57,7 +65,9 @@ public final class IconTextRenderer {
 
         for (Part part : parts) {
             if (part.icon != null) {
-                drawIcon(part.icon, cursor, y, alpha);
+                if (!shadowPass) {
+                    drawIcon(part.icon, cursor, y, alpha);
+                }
                 cursor += part.icon.width;
                 continue;
             }

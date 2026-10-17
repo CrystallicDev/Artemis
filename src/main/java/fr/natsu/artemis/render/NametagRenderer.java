@@ -8,6 +8,7 @@ import fr.natsu.artemis.ArtemisSettings;
 import fr.natsu.artemis.module.nametag.AdventureText;
 import fr.natsu.artemis.module.nametag.NametagState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -96,20 +97,20 @@ public final class NametagRenderer {
         GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GL11.glPopMatrix();
     }
 
     private static void drawBackground(int x1, int y1, int x2, int y2) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.25F);
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(0.0F, 0.0F, 0.0F, 0.25F);
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2f(x1, y2);
         GL11.glVertex2f(x2, y2);
         GL11.glVertex2f(x2, y1);
         GL11.glVertex2f(x1, y1);
         GL11.glEnd();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

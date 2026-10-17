@@ -143,7 +143,7 @@ public final class CooldownRenderer {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GL11.glColor4f(r, g, b, a);
+        GlStateManager.color(r, g, b, a);
 
         int steps = Math.max(1, Math.round(SEGMENTS * (sweepDeg / 360.0F)));
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);

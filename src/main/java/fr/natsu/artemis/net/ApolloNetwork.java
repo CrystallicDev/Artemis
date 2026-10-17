@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.protobuf.Any;
 
 import fr.natsu.artemis.Artemis;
+import fr.natsu.artemis.LunarHost;
+import fr.natsu.artemis.module.glow.GlowModule;
 import fr.natsu.artemis.module.chat.ArtemisChat;
 import fr.natsu.artemis.module.events.ArtemisEvents;
 import fr.natsu.artemis.module.lightning.ArtemisLightning;
@@ -57,13 +59,33 @@ public final class ApolloNetwork {
         if (manager == null) {
             return;
         }
-        String channels = String.join(REGISTER_SEPARATOR,
-            ApolloProtocol.CHANNEL, ArtemisChat.CHANNEL, ArtemisLightning.CHANNEL, ArtemisEvents.CHANNEL);
+        String channels = LunarHost.isLunar()
+            ? String.join(REGISTER_SEPARATOR, ArtemisChat.CHANNEL, ArtemisLightning.CHANNEL)
+            : String.join(REGISTER_SEPARATOR,
+                ApolloProtocol.CHANNEL, ArtemisChat.CHANNEL, ArtemisLightning.CHANNEL, ArtemisEvents.CHANNEL);
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeBytes(channels.getBytes(StandardCharsets.UTF_8));
         manager.sendPacket(new C17PacketCustomPayload(ApolloProtocol.REGISTER_CHANNEL, buffer));
-        Artemis.LOGGER.info("[Apollo] announced channels to the server: {}, {}, {}, {}",
-            ApolloProtocol.CHANNEL, ArtemisChat.CHANNEL, ArtemisLightning.CHANNEL, ArtemisEvents.CHANNEL);
+        Artemis.LOGGER.info("[Apollo] announced channels to the server: {}",
+            channels.replace(REGISTER_SEPARATOR, ", "));
+    }
+
+    public boolean handleIncomingIfOwned(byte[] payload) {
+        if (!LunarHost.isLunar()) {
+            this.handleIncoming(payload);
+            return true;
+        }
+        Any any;
+        try {
+            any = Any.parseFrom(payload);
+        } catch (Exception e) {
+            return false;
+        }
+        if (!ApolloProtocol.messageType(any.getTypeUrl()).startsWith(GlowModule.MESSAGE_PREFIX)) {
+            return false;
+        }
+        this.handleIncoming(payload);
+        return true;
     }
 
     public void handleIncoming(byte[] payload) {

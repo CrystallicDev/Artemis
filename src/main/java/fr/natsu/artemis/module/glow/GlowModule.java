@@ -23,6 +23,8 @@ import fr.natsu.artemis.net.ApolloProtos;
  */
 public final class GlowModule {
 
+    public static final String MESSAGE_PREFIX = "lunarclient.apollo.glow.v1.";
+
     private static final String OVERRIDE = "lunarclient.apollo.glow.v1.OverrideGlowEffectMessage";
     private static final String RESET = "lunarclient.apollo.glow.v1.ResetGlowEffectMessage";
     private static final String RESET_ALL = "lunarclient.apollo.glow.v1.ResetGlowEffectsMessage";

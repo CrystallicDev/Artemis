@@ -1,6 +1,7 @@
 package fr.natsu.artemis.module.glint;
 
 import net.minecraft.item.ItemStack;
+import fr.natsu.artemis.LunarHost;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -20,6 +21,9 @@ public final class GlintState {
     }
 
     public static boolean hasGlint(ItemStack stack) {
+        if (LunarHost.isLunar()) {
+            return false;
+        }
         if (stack == null || !stack.hasTagCompound()) {
             return false;
         }

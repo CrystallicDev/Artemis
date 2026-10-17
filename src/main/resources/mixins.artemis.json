@@ -17,5 +17,7 @@
     "MixinFontRenderer",
     "MixinS3EPacketTeams"
   ],
-  "mixins": []
+  "mixins": [
+    "MixinEntity"
+  ]
 }

@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import fr.natsu.artemis.module.border.BorderState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -30,7 +30,9 @@ public final class BorderRenderer {
             return;
         }
 
-        Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
+        RenderManager renderManager = mc.getRenderManager();
+
+        Vec3 camera = new Vec3(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
         double renderDistance = mc.gameSettings.renderDistanceChunks * 16.0D;
         float scroll = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F;
 

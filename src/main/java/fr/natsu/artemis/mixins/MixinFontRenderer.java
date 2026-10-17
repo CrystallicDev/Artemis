@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import fr.natsu.artemis.module.chat.HexTextRenderer;
+import fr.natsu.artemis.module.chat.LunarFontBridge;
 import fr.natsu.artemis.module.icon.IconTextRenderer;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -15,20 +16,34 @@ public class MixinFontRenderer {
     private static final char SECTION = '§';
 
     @Inject(
-        method = "drawString(Ljava/lang/String;FFIZ)I",
+        method = "renderString(Ljava/lang/String;FFIZ)I",
         at = @At("HEAD"), cancellable = true, require = 0)
-    private void artemis$hexDraw(String text, float x, float y, int color, boolean dropShadow,
+    private void artemis$hexRender(String text, float x, float y, int color, boolean shadowPass,
             CallbackInfoReturnable<Integer> cir) {
         if (text == null) {
             return;
         }
         FontRenderer self = (FontRenderer) (Object) this;
-        if (IconTextRenderer.contains(text)) {
-            cir.setReturnValue(IconTextRenderer.draw(self, text, x, y, color, dropShadow));
+        boolean icons = IconTextRenderer.contains(text);
+        if (!icons && !containsHex(text)) {
             return;
         }
-        if (containsHex(text)) {
-            cir.setReturnValue(HexTextRenderer.draw(self, text, x, y, color, dropShadow));
+        Object holder = LunarFontBridge.current(self);
+        int drawColor = color;
+        if (holder != null) {
+            int alpha = LunarFontBridge.alphaOf(holder, x, y, (color >>> 24) & 0xFF);
+            if (alpha < 4) {
+                return;
+            }
+            drawColor = (alpha << 24) | (color & 0xFFFFFF);
+            LunarFontBridge.suspend(self);
+        }
+        try {
+            cir.setReturnValue(icons
+                ? IconTextRenderer.draw(self, text, x, y, drawColor, false, shadowPass)
+                : HexTextRenderer.draw(self, text, x, y, drawColor, false, shadowPass));
+        } finally {
+            LunarFontBridge.restore(self, holder);
         }
     }
 

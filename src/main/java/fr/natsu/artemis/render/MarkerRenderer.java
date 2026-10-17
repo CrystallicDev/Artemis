@@ -15,7 +15,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -49,7 +49,9 @@ public final class MarkerRenderer {
             return;
         }
 
-        Vec3 camera = ActiveRenderInfo.projectViewFromEntity(mc.thePlayer, event.partialTicks);
+        RenderManager renderManager = mc.getRenderManager();
+
+        Vec3 camera = new Vec3(renderManager.viewerPosX, renderManager.viewerPosY, renderManager.viewerPosZ);
         ScaledResolution resolution = new ScaledResolution(mc);
         float centerX = resolution.getScaledWidth() / 2.0F;
         float centerY = resolution.getScaledHeight() / 2.0F;

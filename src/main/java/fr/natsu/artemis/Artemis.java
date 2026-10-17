@@ -68,9 +68,21 @@ public final class Artemis {
     public void init(FMLInitializationEvent event) {
         ApolloNetwork network = ApolloNetwork.getInstance();
         MinecraftForge.EVENT_BUS.register(network);
+        boolean lunar = LunarHost.isLunar();
 
         GlowModule.register(network);
         MinecraftForge.EVENT_BUS.register(new GlowOverlayListener());
+
+        ModelRegistry.init();
+        IconRegistry.init();
+        MinecraftForge.EVENT_BUS.register(new CustomModelRenderer());
+        MinecraftForge.EVENT_BUS.register(new BossBarRenderer());
+        MinecraftForge.EVENT_BUS.register(new LightningRenderer());
+
+        if (lunar) {
+            LOGGER.info("[Artemis] init - Lunar profile: Glow/Chat/Lightning/Model/Icon/BossBar modules active");
+            return;
+        }
 
         NametagModule.register(network);
         MinecraftForge.EVENT_BUS.register(new NametagRenderer());
@@ -102,16 +114,8 @@ public final class Artemis {
         HologramModule.register(network);
         MinecraftForge.EVENT_BUS.register(new HologramRenderer());
 
-        ModelRegistry.init();
-        IconRegistry.init();
-        MinecraftForge.EVENT_BUS.register(new CustomModelRenderer());
-        MinecraftForge.EVENT_BUS.register(new BossBarRenderer());
-
         ColoredFireModule.register(network);
-
         LimbModule.register(network);
-
-        MinecraftForge.EVENT_BUS.register(new LightningRenderer());
 
         MinecraftForge.EVENT_BUS.register(new ArtemisEvents());
 
@@ -123,6 +127,7 @@ public final class Artemis {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        MixinAudit.report();
         LOGGER.info("[Artemis] postInit - ready");
     }
 }
