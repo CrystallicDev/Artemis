@@ -64,8 +64,9 @@ public final class JemBox {
                 this.positions[face][i][2] = corner[2] * SCALE;
             }
 
-            float[] uv = faceUvs != null && faceUvs[face] != null
-                ? toFloats(faceUvs[face])
+            int[] explicit = faceUvs == null ? null : faceUvs[OPTIFINE_FACE_UV[face]];
+            float[] uv = explicit != null
+                ? explicitUv(face, explicit)
                 : defaultUv(face, textureOffset, w, h, d);
             this.visible[face] = uv != null && uv[0] != uv[2] && uv[1] != uv[3];
             if (!this.visible[face]) {
@@ -96,6 +97,15 @@ public final class JemBox {
             this.texCoords[face][3][0] = u2;
             this.texCoords[face][3][1] = v2;
         }
+    }
+
+    private static final int[] OPTIFINE_FACE_UV = {1, 0, 2, 3, 5, 4};
+
+    private static float[] explicitUv(int face, int[] uv) {
+        if (face == FACE_DOWN || face == FACE_UP) {
+            return new float[] {uv[2], uv[3], uv[0], uv[1]};
+        }
+        return toFloats(uv);
     }
 
     private static float[] toFloats(int[] uv) {
