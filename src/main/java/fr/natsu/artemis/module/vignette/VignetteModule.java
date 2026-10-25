@@ -16,6 +16,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public final class VignetteModule {
 
+    public static final String MESSAGE_PREFIX = "lunarclient.apollo.vignette.v1.";
+
     private static final String DISPLAY = "lunarclient.apollo.vignette.v1.DisplayVignetteMessage";
     private static final String RESET = "lunarclient.apollo.vignette.v1.ResetVignetteMessage";
 

@@ -9,6 +9,7 @@ import com.google.protobuf.Any;
 import fr.natsu.artemis.Artemis;
 import fr.natsu.artemis.LunarHost;
 import fr.natsu.artemis.module.glow.GlowModule;
+import fr.natsu.artemis.module.vignette.VignetteModule;
 import fr.natsu.artemis.module.chat.ArtemisChat;
 import fr.natsu.artemis.module.events.ArtemisEvents;
 import fr.natsu.artemis.module.lightning.ArtemisLightning;
@@ -83,7 +84,7 @@ public final class ApolloNetwork {
             return false;
         }
         String type = ApolloProtocol.messageType(any.getTypeUrl());
-        if (!type.startsWith(GlowModule.MESSAGE_PREFIX)) {
+        if (!type.startsWith(GlowModule.MESSAGE_PREFIX) && !type.startsWith(VignetteModule.MESSAGE_PREFIX)) {
             if (this.passedToLunar.add(type)) {
                 Artemis.LOGGER.info("[Apollo] left to Lunar Client: {}", type);
             }

@@ -73,6 +73,9 @@ public final class Artemis {
         GlowModule.register(network);
         MinecraftForge.EVENT_BUS.register(new GlowOverlayListener());
 
+        VignetteModule.register(network);
+        MinecraftForge.EVENT_BUS.register(new VignetteRenderer());
+
         ModelRegistry.init();
         IconRegistry.init();
         MinecraftForge.EVENT_BUS.register(new CustomModelRenderer());
@@ -80,7 +83,7 @@ public final class Artemis {
         MinecraftForge.EVENT_BUS.register(new LightningRenderer());
 
         if (lunar) {
-            LOGGER.info("[Artemis] init - Lunar profile: Glow/Chat/Lightning/Model/Icon/BossBar modules active");
+            LOGGER.info("[Artemis] init - Lunar profile: Glow/Vignette/Chat/Lightning/Model/Icon/BossBar modules active");
             return;
         }
 
@@ -89,9 +92,6 @@ public final class Artemis {
 
         CooldownModule.register(network);
         MinecraftForge.EVENT_BUS.register(new CooldownRenderer());
-
-        VignetteModule.register(network);
-        MinecraftForge.EVENT_BUS.register(new VignetteRenderer());
 
         TeamModule.register(network);
         MinecraftForge.EVENT_BUS.register(new TeamRenderer());
