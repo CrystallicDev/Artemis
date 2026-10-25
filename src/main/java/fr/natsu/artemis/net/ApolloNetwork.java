@@ -26,6 +26,7 @@ public final class ApolloNetwork {
     private static final String REGISTER_SEPARATOR = String.valueOf((char) 0);
 
     private final Map<String, ApolloPacketHandler> handlers = new ConcurrentHashMap<>();
+    private final java.util.Set<String> passedToLunar = java.util.Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     private boolean logAllIncoming = true;
 
@@ -81,7 +82,11 @@ public final class ApolloNetwork {
         } catch (Exception e) {
             return false;
         }
-        if (!ApolloProtocol.messageType(any.getTypeUrl()).startsWith(GlowModule.MESSAGE_PREFIX)) {
+        String type = ApolloProtocol.messageType(any.getTypeUrl());
+        if (!type.startsWith(GlowModule.MESSAGE_PREFIX)) {
+            if (this.passedToLunar.add(type)) {
+                Artemis.LOGGER.info("[Apollo] left to Lunar Client: {}", type);
+            }
             return false;
         }
         this.handleIncoming(payload);
