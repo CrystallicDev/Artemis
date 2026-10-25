@@ -71,7 +71,9 @@ public final class GlowFramebuffer {
         // GlStateManager.clearColor(couleur du ciel) est saute alors que GL est a noir -> ciel qui clignote.
         GlStateManager.viewport(0, 0, this.width, this.height);
         GlStateManager.clearColor(0.0F, 0.0F, 0.0F, 0.0F);
-        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        // Le clear lui-meme reste brut : sous OptiFine FastRender, GlStateManager.clear est un no-op pendant le rendu
+        // (clearEnabled=false) et le FBO ne serait plus jamais vide -> contours qui s'accumulent sur tout l'ecran.
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
     public void unbindFramebuffer() {
